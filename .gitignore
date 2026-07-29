@@ -1,3 +1,7 @@
 /.vs
 /DiagnosePE.iso
 bin/
+build_live/
+*.iso
+obj/
+legacy_winpe_backup/

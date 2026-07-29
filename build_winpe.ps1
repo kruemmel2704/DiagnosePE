@@ -100,19 +100,9 @@ try {
         Write-Warning "WinPE-WMI.cab nicht gefunden! WMI-Abfragen funktionieren im WinPE eventuell nicht."
     }
 
-    # 7. Copy DirectX runtime DLLs from host if not present (required for ImGui D3D11 WARP renderer)
-    Write-Host "Kopiere DirectX-Bibliotheken für WARP-Render-Support..." -ForegroundColor Blue
-    $system32Dir = Join-Path $mountDir "Windows\System32"
-    $dlls = @("d3d11.dll", "dxgi.dll", "d3d10warp.dll", "d3dcompiler_47.dll")
-    foreach ($dll in $dlls) {
-        $targetPath = Join-Path $system32Dir $dll
-        if (-not (Test-Path $targetPath)) {
-            Write-Host "Kopiere $dll vom Host..." -ForegroundColor Green
-            Copy-Item -Path "C:\Windows\System32\$dll" -Destination $system32Dir -Force
-        } else {
-            Write-Host "$dll ist bereits im WinPE-Image vorhanden (wird nicht überschrieben)." -ForegroundColor Yellow
-        }
-    }
+    # 7. Using GDI backend rendering
+    # The GDI backend relies solely on native APIs (user32, gdi32) built-in to every WinPE out-of-the-box.
+    # No graphics-related DLLs (DirectX, OpenGL, etc.) are copied or injected.
 
     # 8. Create Target Directories and Copy files
     Write-Host "Kopiere CPM Diagnose Tool und Abhängigkeiten..." -ForegroundColor Blue
@@ -120,6 +110,7 @@ try {
     New-Item -ItemType Directory -Path $targetAppDir -Force | Out-Null
 
     Copy-Item -Path $compiledExe -Destination $targetAppDir -Force
+
 
     # Copy external Tools folder if it exists in the workspace
     $localToolsDir = Join-Path $scriptPath "Tools"
@@ -138,6 +129,7 @@ wpeinit
 ping 127.0.0.1 -n 3 >nul
 cd "\Program Files\DiagnoseTool"
 DiagnosePE.exe
+echo DiagnosePE.exe beendet mit Exitcode %ERRORLEVEL% >> X:\DiagnosePE-start.log
 "@
     Set-Content -Path $startnetCmd -Value $startnetContent -Encoding Ascii
 
@@ -151,6 +143,12 @@ DiagnosePE.exe
         Remove-Item $isoOutput -Force
     }
     & cmd.exe /c "call `"$dandisEnvBat`" && `"$makeWinPeMediaCmd`" /iso `"$buildDir`" `"$isoOutput`""
+
+    # Grant Hyper-V permissions to the ISO file to prevent "Access Denied" errors in Hyper-V Manager
+    if (Get-Service -Name "vmms" -ErrorAction SilentlyContinue) {
+        Write-Host "Erteile Hyper-V Leserechte für das ISO..." -ForegroundColor Blue
+        & icacls.exe `"$isoOutput`" /grant `"NT VIRTUAL MACHINE\Virtual Machines:R`" | Out-Null
+    }
 
     # 12. Final Cleanup
     Write-Host "Lösche temporäres Buildverzeichnis..." -ForegroundColor Blue

@@ -1,6 +1,8 @@
 #include "stress_test.h"
 #include <cmath>
+#ifdef _WIN32
 #include <windows.h>
+#endif
 
 StressTest::StressTest() {
     isRunning.store(false);
@@ -13,7 +15,9 @@ StressTest::~StressTest() {
 
 void StressTest::WorkerLoop() {
     // Set priority to below normal to keep UI responsive
+#ifdef _WIN32
     SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_BELOW_NORMAL);
+#endif
 
     double val = 12345.67;
     int counter = 0;

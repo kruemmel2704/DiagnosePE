@@ -1,35 +1,27 @@
 #include "system_repair.h"
-#include <windows.h>
-#include <shellapi.h>
+#include <cstdlib>
+#include <string>
 
 bool SystemRepair::RunRepair(const std::wstring& key, std::wstring& outDescription) {
-    std::wstring commandArgs = L"";
-    
-    if (key == L"sfc") {
-        commandArgs = L"/k sfc /scannow";
-        outDescription = L"System File Checker (SFC)";
-    } else if (key == L"dism_restore") {
-        commandArgs = L"/k dism /online /cleanup-image /restorehealth";
-        outDescription = L"DISM Restore Health";
-    } else if (key == L"dism_check") {
-        commandArgs = L"/k dism /online /cleanup-image /checkhealth";
-        outDescription = L"DISM Check Health";
-    } else if (key == L"chkdsk") {
-        commandArgs = L"/k chkdsk C:";
-        outDescription = L"Chkdsk C: (Read-only)";
+    std::string cmd = "";
+
+    if (key == L"sfc" || key == L"fsck") {
+        cmd = "xterm -e 'sudo fsck -f /dev/sda1 || sudo fsck -f /dev/nvme0n1p1' &";
+        outDescription = L"Linux Filesystem Check (fsck)";
+    } else if (key == L"ntfsfix") {
+        cmd = "xterm -e 'sudo ntfsfix /dev/sda2 || sudo ntfsfix /dev/nvme0n1p2' &";
+        outDescription = L"NTFS Partition Quick Fix (ntfsfix)";
+    } else if (key == L"grub_repair") {
+        cmd = "xterm -e 'echo Running GRUB bootloader repair... && sudo update-grub' &";
+        outDescription = L"GRUB Bootloader Repair (update-grub)";
+    } else if (key == L"chkdsk" || key == L"badblocks") {
+        cmd = "xterm -e 'sudo badblocks -sv /dev/sda || sudo badblocks -sv /dev/nvme0n1' &";
+        outDescription = L"Disk Surface & Bad Blocks Scan (badblocks)";
     } else {
-        outDescription = L"Unbekannter Befehl";
+        outDescription = L"Unbekannte Linux-Reparaturfunktion";
         return false;
     }
 
-    HINSTANCE hInst = ShellExecuteW(
-        NULL,
-        L"runas", // Triggers elevation prompt
-        L"cmd.exe",
-        commandArgs.c_str(),
-        NULL,
-        SW_SHOW
-    );
-
-    return (reinterpret_cast<intptr_t>(hInst) > 32);
+    int res = std::system(cmd.c_str());
+    return (res == 0);
 }

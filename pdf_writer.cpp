@@ -1,5 +1,8 @@
 #include "pdf_writer.h"
+#include "platform_compat.h"
+#ifdef _WIN32
 #include <windows.h>
+#endif
 #include <cmath>
 #include <iomanip>
 #include <algorithm>

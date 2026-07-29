@@ -1,9 +1,25 @@
 #include "battery_service.h"
-#include "wmi_helper.h"
-#include <windows.h>
-#include <sstream>
-#include <iomanip>
-#include <algorithm>
+#include "platform_compat.h"
+#include <fstream>
+#include <string>
+#include <filesystem>
+#include <cwchar>
+
+namespace fs = std::filesystem;
+
+static std::wstring StringToWString(const std::string& str) {
+    if (str.empty()) return L"";
+    return std::wstring(str.begin(), str.end());
+}
+
+static std::string ReadFileFirstLine(const std::string& path) {
+    std::ifstream file(path);
+    if (!file.is_open()) return "";
+    std::string line;
+    std::getline(file, line);
+    line.erase(line.find_last_not_of(" \n\r\t") + 1);
+    return line;
+}
 
 std::wstring BatteryInfo::GetChargingStatusDisplay() const {
     if (!isPresent) return L"Keine Batterie erkannt";
@@ -22,137 +38,89 @@ std::wstring BatteryInfo::GetRemainingTimeDisplay() const {
     int minutes = (remainingTimeSeconds % 3600) / 60;
     
     wchar_t buf[64];
-    swprintf_s(buf, L"%02d Std. %02d Min.", hours, minutes);
+    swprintf_s(buf, 64, L"%02d Std. %02d Min.", hours, minutes);
     return buf;
 }
 
 std::wstring BatteryInfo::GetHealthDisplay() const {
     if (!isPresent) return L"--";
     wchar_t buf[64];
-    swprintf_s(buf, L"%.1f %%", healthPercent);
+    swprintf_s(buf, 64, L"%.1f %%", healthPercent);
     return buf;
 }
 
 std::wstring BatteryInfo::GetDesignCapacityDisplay() const {
     if (!isPresent) return L"--";
     wchar_t buf[64];
-    swprintf_s(buf, L"%u mWh", designCapacity);
+    swprintf_s(buf, 64, L"%u mWh", designCapacity);
     return buf;
 }
 
 std::wstring BatteryInfo::GetFullChargeCapacityDisplay() const {
     if (!isPresent) return L"--";
     wchar_t buf[64];
-    swprintf_s(buf, L"%u mWh", fullChargeCapacity);
+    swprintf_s(buf, 64, L"%u mWh", fullChargeCapacity);
     return buf;
 }
 
-void BatteryService::QueryFallbackCimv2(BatteryInfo& info) {
-    auto list = WmiHelper::Query(
-        L"ROOT\\CIMV2",
-        L"SELECT EstimatedChargeRemaining, DesignCapacity, FullChargeCapacity, DeviceID FROM Win32_Battery",
-        {L"EstimatedChargeRemaining", L"DesignCapacity", L"FullChargeCapacity", L"DeviceID"}
-    );
-
-    if (list.empty()) return;
-
-    info.isPresent = true;
-    const auto& row = list[0];
-
-    try {
-        if (row.values.count(L"DesignCapacity") && row.values.at(L"DesignCapacity") != L"Unbekannt") {
-            info.designCapacity = std::wcstoul(row.values.at(L"DesignCapacity").c_str(), nullptr, 10);
-        }
-        if (row.values.count(L"FullChargeCapacity") && row.values.at(L"FullChargeCapacity") != L"Unbekannt") {
-            info.fullChargeCapacity = std::wcstoul(row.values.at(L"FullChargeCapacity").c_str(), nullptr, 10);
-        }
-        if (row.values.count(L"DeviceID") && row.values.at(L"DeviceID") != L"Unbekannt") {
-            info.deviceName = row.values.at(L"DeviceID");
-        }
-        if (info.currentChargePercent == 0.0 && row.values.count(L"EstimatedChargeRemaining") && row.values.at(L"EstimatedChargeRemaining") != L"Unbekannt") {
-            info.currentChargePercent = std::wcstod(row.values.at(L"EstimatedChargeRemaining").c_str(), nullptr);
-        }
-
-        if (info.designCapacity > 0) {
-            info.healthPercent = ((double)info.fullChargeCapacity / info.designCapacity) * 100.0;
-            if (info.healthPercent > 100.0) info.healthPercent = 100.0;
-        }
-    } catch (...) {}
-}
+void BatteryService::QueryFallbackCimv2(BatteryInfo& info) {}
 
 BatteryInfo BatteryService::GetBatteryInfo() {
     BatteryInfo info;
+    info.isPresent = false;
 
-    // 1. Get real-time status using Win32 API
-    SYSTEM_POWER_STATUS status;
-    if (GetSystemPowerStatus(&status)) {
-        if (status.BatteryLifePercent != 255) {
-            info.currentChargePercent = status.BatteryLifePercent;
-            info.isPresent = (status.BatteryFlag & 128) == 0;
-        } else {
-            info.isPresent = false;
+    try {
+        if (fs::exists("/sys/class/power_supply")) {
+            for (const auto& entry : fs::directory_iterator("/sys/class/power_supply")) {
+                std::string name = entry.path().filename().string();
+                if (name.find("AC") != std::string::npos || name.find("ADP") != std::string::npos) {
+                    std::string onlineStr = ReadFileFirstLine(entry.path().string() + "/online");
+                    if (onlineStr == "1") {
+                        info.isConnectedToAc = true;
+                    }
+                }
+            }
+
+            for (const auto& entry : fs::directory_iterator("/sys/class/power_supply")) {
+                std::string name = entry.path().filename().string();
+                if (name.rfind("BAT", 0) == 0) {
+                    info.isPresent = true;
+                    std::string batPath = entry.path().string();
+
+                    info.manufacturer = StringToWString(ReadFileFirstLine(batPath + "/manufacturer"));
+                    info.deviceName = StringToWString(ReadFileFirstLine(batPath + "/model_name"));
+                    info.chemistry = StringToWString(ReadFileFirstLine(batPath + "/technology"));
+
+                    std::string statusStr = ReadFileFirstLine(batPath + "/status");
+                    info.isCharging = (statusStr == "Charging");
+
+                    std::string capStr = ReadFileFirstLine(batPath + "/capacity");
+                    if (!capStr.empty()) {
+                        info.currentChargePercent = std::stod(capStr);
+                    }
+
+                    std::string designStr = ReadFileFirstLine(batPath + "/energy_full_design");
+                    if (designStr.empty()) designStr = ReadFileFirstLine(batPath + "/charge_full_design");
+                    if (!designStr.empty()) {
+                        info.designCapacity = std::stoul(designStr) / 1000;
+                    }
+
+                    std::string fullStr = ReadFileFirstLine(batPath + "/energy_full");
+                    if (fullStr.empty()) fullStr = ReadFileFirstLine(batPath + "/charge_full");
+                    if (!fullStr.empty()) {
+                        info.fullChargeCapacity = std::stoul(fullStr) / 1000;
+                    }
+
+                    if (info.designCapacity > 0 && info.fullChargeCapacity > 0) {
+                        info.healthPercent = ((double)info.fullChargeCapacity / (double)info.designCapacity) * 100.0;
+                        if (info.healthPercent > 100.0) info.healthPercent = 100.0;
+                    }
+
+                    break;
+                }
+            }
         }
-        
-        info.isConnectedToAc = (status.ACLineStatus == 1);
-        info.isCharging = (status.BatteryFlag & 8) != 0;
-        info.remainingTimeSeconds = status.BatteryLifeTime;
-    } else {
-        info.isPresent = false;
-    }
-
-    if (!info.isPresent) {
-        return info;
-    }
-
-    // 2. Query static information using WMI root\wmi
-    auto staticData = WmiHelper::Query(
-        L"ROOT\\WMI",
-        L"SELECT DesignedCapacity, ManufacturerName, DeviceName, Chemistry FROM BatteryStaticData",
-        {L"DesignedCapacity", L"ManufacturerName", L"DeviceName", L"Chemistry"}
-    );
-
-    bool wmiSuccess = false;
-    if (!staticData.empty()) {
-        const auto& row = staticData[0];
-        try {
-            if (row.values.count(L"DesignedCapacity") && row.values.at(L"DesignedCapacity") != L"Unbekannt") {
-                info.designCapacity = std::wcstoul(row.values.at(L"DesignedCapacity").c_str(), nullptr, 10);
-            }
-            if (row.values.count(L"ManufacturerName")) {
-                info.manufacturer = row.values.at(L"ManufacturerName");
-            }
-            if (row.values.count(L"DeviceName")) {
-                info.deviceName = row.values.at(L"DeviceName");
-            }
-            if (row.values.count(L"Chemistry")) {
-                info.chemistry = row.values.at(L"Chemistry");
-            }
-            wmiSuccess = true;
-        } catch (...) {}
-    }
-
-    auto fullCapacityData = WmiHelper::Query(
-        L"ROOT\\WMI",
-        L"SELECT FullChargedCapacity FROM BatteryFullChargedCapacity",
-        {L"FullChargedCapacity"}
-    );
-
-    if (!fullCapacityData.empty()) {
-        const auto& row = fullCapacityData[0];
-        try {
-            if (row.values.count(L"FullChargedCapacity") && row.values.at(L"FullChargedCapacity") != L"Unbekannt") {
-                info.fullChargeCapacity = std::wcstoul(row.values.at(L"FullChargedCapacity").c_str(), nullptr, 10);
-            }
-        } catch (...) {}
-    }
-
-    if (wmiSuccess && info.designCapacity > 0) {
-        info.healthPercent = ((double)info.fullChargeCapacity / info.designCapacity) * 100.0;
-        if (info.healthPercent > 100.0) info.healthPercent = 100.0;
-    } else {
-        // Try fallback
-        QueryFallbackCimv2(info);
-    }
+    } catch (...) {}
 
     return info;
 }

@@ -1,7 +1,9 @@
 #pragma once
+#include "platform_compat.h"
 #include "hardware_monitor.h"
 #include "battery_service.h"
 #include "stress_test.h"
+#include "ram_test.h"
 #include "tool_launcher.h"
 #include "pdf_writer.h"
 #include <chrono>
@@ -12,6 +14,7 @@ private:
     HardwareMonitor monitor;
     ToolLauncher launcher;
     StressTest stressTest;
+    RamTest ramTest;
 
     HardwareDiagnostics currentDiag;
     BatteryInfo currentBattery;
@@ -22,6 +25,7 @@ private:
     bool showRepair = false;
     bool showBattery = false;
     bool showStress = false;
+    bool showRamTest = false;
     bool showGuide = false;
     bool showStartMenu = false;
     bool showPdfSaveModal = false;
@@ -35,6 +39,7 @@ private:
     bool minRepair = false;
     bool minBattery = false;
     bool minStress = false;
+    bool minRamTest = false;
     bool minGuide = false;
 
     // Focus states from previous frame
@@ -43,6 +48,7 @@ private:
     bool focusRepair = false;
     bool focusBattery = false;
     bool focusStress = false;
+    bool focusRamTest = false;
     bool focusGuide = false;
 
     std::wstring statusMessage = L"Bereit";
@@ -86,6 +92,10 @@ private:
     std::vector<std::wstring> cpuStressLog;
     std::chrono::steady_clock::time_point lastCpuStressLogTime;
 
+    // RAM Test settings
+    int ramTestSelectedSizeGb = 2;
+    std::vector<std::wstring> ramTestLog;
+
     // Timing helper
     std::chrono::steady_clock::time_point lastSecondTick;
 
@@ -100,6 +110,7 @@ private:
     void DrawRepair(void* hwnd);
     void DrawBattery(void* hwnd);
     void DrawCpuStress(void* hwnd);
+    void DrawRamTest(void* hwnd);
     void DrawGuide();
 
     // Desktop Shell helpers
@@ -119,4 +130,5 @@ public:
 
     void ApplyTheme();
     bool IsRecordingActive() const { return isRecording; }
+    void RenderGui();
 };

@@ -1,28 +1,198 @@
 #include "gui.h"
+#include "platform_compat.h"
 #include "system_repair.h"
 #include "imgui.h"
-#include <windows.h>
-#include <commdlg.h>
+#include <cmath>
 #include <sstream>
 #include <iomanip>
 #include <chrono>
 #include <algorithm>
 
+#ifdef _WIN32
+#include <windows.h>
+#include <commdlg.h>
 static std::wstring NarrowToWide(const std::string& str) {
+    if (str.empty()) return L"";
     int size = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
     std::wstring wstr(size, 0);
     MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, &wstr[0], size);
-    // Remove null terminator
     if (!wstr.empty() && wstr.back() == 0) wstr.pop_back();
     return wstr;
 }
 
 static std::string WideToNarrow(const std::wstring& wstr) {
+    if (wstr.empty()) return "";
     int size = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), -1, NULL, 0, NULL, NULL);
     std::string str(size, 0);
     WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), -1, &str[0], size, NULL, NULL);
     if (!str.empty() && str.back() == 0) str.pop_back();
     return str;
+}
+#else
+static std::wstring NarrowToWide(const std::string& str) {
+    if (str.empty()) return L"";
+    return std::wstring(str.begin(), str.end());
+}
+
+static std::string WideToNarrow(const std::wstring& wstr) {
+    if (wstr.empty()) return "";
+    return std::string(wstr.begin(), wstr.end());
+}
+#endif
+
+static void LaunchShellCommand(const wchar_t* target) {
+#ifdef _WIN32
+    ShellExecuteW(NULL, L"open", target, NULL, NULL, SW_SHOWNORMAL);
+#else
+    std::wstring wtarget(target);
+    std::string str(wtarget.begin(), wtarget.end());
+    std::string cmd;
+    if (str.find("http") != std::string::npos) {
+        cmd = "xdg-open \"" + str + "\" &";
+    } else {
+        cmd = str + " &";
+    }
+    std::system(cmd.c_str());
+#endif
+}
+
+static const char* PATH_F = "M16.68,11c.23-.45,.58-.84,1-1.12,.38-.3,.86-.46,1.34-.45l15.71,.17L37.36,.24,16.38,0c-1.68-.04-3.33,.39-4.77,1.26-1.46,.9-2.73,2.06-3.76,3.43-1.14,1.52-2.09,3.17-2.83,4.92-.82,1.85-1.53,3.74-2.14,5.66,.01,.06,.01,.11,0,.17l11.76,.14c.6-1.56,1.28-3.09,2.04-4.58Z";
+static const char* PATH_H = "M13.16,32.09c-.47-.12-.89-.38-1.21-.75-.32-.37-.46-.86-.38-1.34,.31-2.93,.9-5.81,1.75-8.63,.36-1.15,.76-2.27,1.19-3.38l-11.75-.11c-.58,1.87-1.07,3.73-1.46,5.56-.38,1.83-.74,3.56-1,5C.05,29.85-.05,31.29,.02,32.72c.06,1.44,.33,2.86,.81,4.21,.42,1.26,1.13,2.4,2.07,3.34,.98,.97,2.27,1.58,3.65,1.73,6.58,.88,13.25,.8,19.8-.24l2.67-9.76c-2.59,.53-5.23,.79-7.87,.78-2.66-.02-5.32-.26-7.94-.71l-.05,.02Z";
+static const char* PATH_I = "M50.93,7.64l6.6,.07c.42,0,.83,.13,1.18,.36,.36,.24,.66,.54,.9,.9,.25,.38,.44,.79,.57,1.23,.13,.42,.2,.87,.2,1.31,0,1.19-.21,2.37-.63,3.49-.15,.4-.33,.79-.54,1.16l10.07,.12c0-.17,.12-.34,.17-.51,.55-1.98,.85-4.02,.88-6.08,.01-1.04-.15-2.07-.48-3.05-.31-.96-.8-1.86-1.44-2.64-1-1.16-2.27-2.04-3.71-2.56-1.41-.51-2.89-.78-4.38-.8l-18-.2-4.4,15.42,10.59,.14,2.42-8.36Z";
+static const char* PATH_K = "M59.2,18.53c-.33,.62-.72,1.21-1.18,1.75-.29,.34-.57,.67-.84,1-.29,.33-.63,.61-1,.84-.46,.26-.95,.45-1.46,.56-.72,.14-1.46,.2-2.19,.18l-5.31-.06,1.29-4.42-10.59-.12-6.76,23.59,10.59,.15,3.21-11.12,12.25,.12c1.03,.02,2.06-.19,3-.62,.95-.42,1.84-.96,2.65-1.62,.85-.69,1.62-1.48,2.3-2.34,.67-.86,1.29-1.76,1.86-2.7,.94-1.6,1.69-3.3,2.23-5.07l-10.05-.12Z";
+static const char* PATH_M = "M67.7,42.28l10.5,.12,6.7-23.57-10.5-.13-6.7,23.58Z";
+static const char* PATH_O = "M88.92,34h2.31l11.46-15-16.23-.19,2.46,15.19Z";
+static const char* PATH_Q = "M104.15,19.05l-6.77,23.57,10.64,.13,6.68-23.58-10.55-.12Z";
+static const char* PATH_R = "M119.11,1.33l-9.55-.11c-1.26,0-2.49,.31-3.59,.92-1.18,.65-2.2,1.54-3,2.63l-6.95,9.37-1.43-9c-.11-.6-.34-1.18-.68-1.69-.66-1-1.62-1.76-2.75-2.16-.55-.19-1.13-.29-1.71-.29l-10.64-.14-4.39,15.43,10.5,.12,1-3.53,.57,3.56,16.23,.19,2.32-3-.87,3.07,10.56,.12,4.38-15.49Z";
+
+#include <atomic>
+#include <string>
+
+extern std::atomic<bool> g_importingDrivers;
+extern std::wstring g_driverImportStatus;
+
+static const char* ScanFloat(const char* p, float& outVal) {
+    if (!p) return nullptr;
+    while (*p && (*p == ' ' || *p == ',' || *p == '\t' || *p == '\r' || *p == '\n')) p++;
+    if (!*p) return nullptr;
+    char* endptr = nullptr;
+    outVal = std::strtof(p, &endptr);
+    if (endptr == p) return nullptr;
+    return endptr;
+}
+
+static void DrawSvgPath(ImDrawList* dl, const char* pathStr, ImVec2 offset, float scale, ImU32 color) {
+    const char* p = pathStr;
+    ImVec2 currentPos(0, 0);
+    ImVec2 startPos(0, 0);
+    char lastCmd = '\0';
+
+    dl->PathClear();
+
+    while (p && *p) {
+        while (*p && (*p == ' ' || *p == ',' || *p == '\r' || *p == '\n' || *p == '\t')) {
+            p++;
+        }
+        if (!*p) break;
+
+        char cmd = *p;
+        bool isNum = (cmd == '-' || cmd == '+' || cmd == '.' || (cmd >= '0' && cmd <= '9'));
+        if (isNum && lastCmd != '\0') {
+            cmd = lastCmd;
+        } else {
+            p++;
+            lastCmd = cmd;
+        }
+
+        if (cmd == 'M' || cmd == 'm') {
+            float x, y;
+            p = ScanFloat(p, x);
+            p = ScanFloat(p, y);
+            if (p) {
+                if (cmd == 'm') {
+                    currentPos.x += x;
+                    currentPos.y += y;
+                } else {
+                    currentPos.x = x;
+                    currentPos.y = y;
+                }
+                dl->PathLineTo(ImVec2(offset.x + currentPos.x * scale, offset.y + currentPos.y * scale));
+                startPos = currentPos;
+            }
+            lastCmd = (cmd == 'm') ? 'l' : 'L';
+        }
+        else if (cmd == 'L' || cmd == 'l') {
+            float x, y;
+            p = ScanFloat(p, x);
+            p = ScanFloat(p, y);
+            if (p) {
+                if (cmd == 'l') {
+                    currentPos.x += x;
+                    currentPos.y += y;
+                } else {
+                    currentPos.x = x;
+                    currentPos.y = y;
+                }
+                dl->PathLineTo(ImVec2(offset.x + currentPos.x * scale, offset.y + currentPos.y * scale));
+            }
+        }
+        else if (cmd == 'H' || cmd == 'h') {
+            float x;
+            p = ScanFloat(p, x);
+            if (p) {
+                if (cmd == 'h') {
+                    currentPos.x += x;
+                } else {
+                    currentPos.x = x;
+                }
+                dl->PathLineTo(ImVec2(offset.x + currentPos.x * scale, offset.y + currentPos.y * scale));
+            }
+        }
+        else if (cmd == 'V' || cmd == 'v') {
+            float y;
+            p = ScanFloat(p, y);
+            if (p) {
+                if (cmd == 'v') {
+                    currentPos.y += y;
+                } else {
+                    currentPos.y = y;
+                }
+                dl->PathLineTo(ImVec2(offset.x + currentPos.x * scale, offset.y + currentPos.y * scale));
+            }
+        }
+        else if (cmd == 'C' || cmd == 'c') {
+            float x1, y1, x2, y2, x3, y3;
+            p = ScanFloat(p, x1); p = ScanFloat(p, y1);
+            p = ScanFloat(p, x2); p = ScanFloat(p, y2);
+            p = ScanFloat(p, x3); p = ScanFloat(p, y3);
+            if (p) {
+                ImVec2 cp1, cp2, dest;
+                if (cmd == 'c') {
+                    cp1 = ImVec2(offset.x + (currentPos.x + x1) * scale, offset.y + (currentPos.y + y1) * scale);
+                    cp2 = ImVec2(offset.x + (currentPos.x + x2) * scale, offset.y + (currentPos.y + y2) * scale);
+                    currentPos.x += x3;
+                    currentPos.y += y3;
+                    dest = ImVec2(offset.x + currentPos.x * scale, offset.y + currentPos.y * scale);
+                } else {
+                    cp1 = ImVec2(offset.x + x1 * scale, offset.y + y1 * scale);
+                    cp2 = ImVec2(offset.x + x2 * scale, offset.y + y2 * scale);
+                    currentPos.x = x3;
+                    currentPos.y = y3;
+                    dest = ImVec2(offset.x + currentPos.x * scale, offset.y + currentPos.y * scale);
+                }
+                dl->PathBezierCubicCurveTo(cp1, cp2, dest);
+            }
+        }
+        else if (cmd == 'Z' || cmd == 'z') {
+            currentPos = startPos;
+            dl->PathFillConcave(color);
+            dl->PathClear();
+            lastCmd = '\0';
+        }
+        else {
+            p++;
+        }
+    }
 }
 
 GuiController::GuiController() {
@@ -43,6 +213,7 @@ GuiController::~GuiController() {
 void GuiController::Initialize() {
     // Query admin status
     isAdmin = false;
+#ifdef _WIN32
     HANDLE hToken = NULL;
     if (OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &hToken)) {
         TOKEN_ELEVATION elevation;
@@ -52,6 +223,9 @@ void GuiController::Initialize() {
         }
         CloseHandle(hToken);
     }
+#else
+    isAdmin = (geteuid() == 0);
+#endif
 
     currentDiag = monitor.GetDiagnostics();
     currentBattery = BatteryService::GetBatteryInfo();
@@ -239,7 +413,8 @@ void GuiController::Draw(void* hwnd, bool& isMaximized, bool& triggerClose, bool
     // 2. Draw Floating Windows
     // Dashboard
     if (showDashboard && !minDashboard) {
-        ImGui::SetNextWindowSize(ImVec2(820, 520), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowPos(ImVec2(320, 80), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowSize(ImVec2(880, 560), ImGuiCond_FirstUseEver);
         ImGui::PushStyleColor(ImGuiCol_Border, focusDashboard ? ImVec4(0.00f, 0.76f, 1.00f, 0.80f) : ImVec4(0.12f, 0.16f, 0.28f, 1.00f));
         if (ImGui::Begin("Dashboard - Systemübersicht", &showDashboard, ImGuiWindowFlags_NoCollapse)) {
             focusDashboard = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
@@ -253,7 +428,8 @@ void GuiController::Draw(void* hwnd, bool& isMaximized, bool& triggerClose, bool
 
     // Tools
     if (showTools && !minTools) {
-        ImGui::SetNextWindowSize(ImVec2(820, 520), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowPos(ImVec2(340, 100), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowSize(ImVec2(880, 560), ImGuiCond_FirstUseEver);
         ImGui::PushStyleColor(ImGuiCol_Border, focusTools ? ImVec4(0.00f, 0.76f, 1.00f, 0.80f) : ImVec4(0.12f, 0.16f, 0.28f, 1.00f));
         if (ImGui::Begin("Hardware-Tools", &showTools, ImGuiWindowFlags_NoCollapse)) {
             focusTools = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
@@ -316,6 +492,20 @@ void GuiController::Draw(void* hwnd, bool& isMaximized, bool& triggerClose, bool
             DrawGuide();
         } else {
             focusGuide = false;
+        }
+        ImGui::End();
+        ImGui::PopStyleColor();
+    }
+
+    // RAM Test Window
+    if (showRamTest && !minRamTest) {
+        ImGui::SetNextWindowSize(ImVec2(820, 520), ImGuiCond_FirstUseEver);
+        ImGui::PushStyleColor(ImGuiCol_Border, focusRamTest ? ImVec4(0.00f, 0.76f, 1.00f, 0.80f) : ImVec4(0.12f, 0.16f, 0.28f, 1.00f));
+        if (ImGui::Begin("RAM Test & Diagnose", &showRamTest, ImGuiWindowFlags_NoCollapse)) {
+            focusRamTest = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
+            DrawRamTest(hwnd);
+        } else {
+            focusRamTest = false;
         }
         ImGui::End();
         ImGui::PopStyleColor();
@@ -403,13 +593,24 @@ void GuiController::DrawDesktop(void* hwnd, float screenWidth, float screenHeigh
     dl->AddLine(ImVec2(center.x + bW*0.5f, center.y - bH*0.5f), ImVec2(center.x + bW*0.5f, center.y + bH*0.5f), bracketColor, 2.0f);
     dl->AddLine(ImVec2(center.x + bW*0.5f, center.y + bH*0.5f), ImVec2(center.x + bW*0.4f, center.y + bH*0.5f), bracketColor, 2.0f);
 
-    // Glowing CPM Text
-    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.00f, 0.76f, 1.00f, 0.22f));
-    ImGui::SetWindowFontScale(3.2f);
-    ImVec2 txtSize = ImGui::CalcTextSize("[ CPM ]");
-    ImGui::SetCursorScreenPos(ImVec2(center.x - txtSize.x*0.5f, center.y - txtSize.y*0.5f - 12.0f));
-    ImGui::Text("[ CPM ]");
-    ImGui::SetWindowFontScale(1.0f);
+    // Glowing CPM Vector Logo
+    float logoWidth = 119.11f;
+    float logoHeight = 42.75f;
+    float scale = 1.8f;
+    ImVec2 logoSize(logoWidth * scale, logoHeight * scale);
+    ImVec2 logoOffset(center.x - logoSize.x * 0.5f, center.y - logoSize.y * 0.5f - 8.0f);
+
+    ImU32 colX = ImGui::ColorConvertFloat4ToU32(ImVec4(0.40f, 0.85f, 1.00f, 0.35f)); // Cyan outline elements
+    ImU32 colGradient = ImGui::ColorConvertFloat4ToU32(ImVec4(0.00f, 0.60f, 0.90f, 0.30f)); // Deeper blue/cyan elements
+
+    DrawSvgPath(dl, PATH_F, logoOffset, scale, colX);
+    DrawSvgPath(dl, PATH_H, logoOffset, scale, colGradient);
+    DrawSvgPath(dl, PATH_I, logoOffset, scale, colX);
+    DrawSvgPath(dl, PATH_K, logoOffset, scale, colGradient);
+    DrawSvgPath(dl, PATH_M, logoOffset, scale, colGradient);
+    DrawSvgPath(dl, PATH_O, logoOffset, scale, colGradient);
+    DrawSvgPath(dl, PATH_Q, logoOffset, scale, colGradient);
+    DrawSvgPath(dl, PATH_R, logoOffset, scale, colX);
     
     // Subtext
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.50f, 0.55f, 0.65f, 0.18f));
@@ -418,7 +619,7 @@ void GuiController::DrawDesktop(void* hwnd, float screenWidth, float screenHeigh
     ImGui::SetCursorScreenPos(ImVec2(center.x - subSize.x*0.5f, center.y + bH*0.5f + 12.0f));
     ImGui::Text("HARDWARE DIAGNOSTICS SHELL");
     ImGui::SetWindowFontScale(1.0f);
-    ImGui::PopStyleColor(2);
+    ImGui::PopStyleColor(1);
 
     // 2. Render Desktop Icon grid (Left side)
     float startX = viewport->Pos.x + 30.0f;
@@ -436,13 +637,13 @@ void GuiController::DrawDesktop(void* hwnd, float screenWidth, float screenHeigh
     bool launchCmd = false; bool dummyCmdMin = false;
     DrawDesktopIcon("CMD Shell", "CMD", startX + 110.0f, startY, launchCmd, dummyCmdMin);
     if (launchCmd) {
-        ShellExecuteW(NULL, L"open", L"cmd.exe", NULL, NULL, SW_SHOWNORMAL);
+        LaunchShellCommand(L"cmd.exe");
     }
 
     bool launchDevmgmt = false; bool dummyDevmgmtMin = false;
     DrawDesktopIcon("Geräte Manager", "DEVMGMT", startX + 110.0f, startY + stepY, launchDevmgmt, dummyDevmgmtMin);
     if (launchDevmgmt) {
-        ShellExecuteW(NULL, L"open", L"devmgmt.msc", NULL, NULL, SW_SHOWNORMAL);
+        LaunchShellCommand(L"devmgmt.msc");
     }
 
     // Power Actions (Reboot / Shutdown)
@@ -456,6 +657,15 @@ void GuiController::DrawDesktop(void* hwnd, float screenWidth, float screenHeigh
     DrawDesktopIcon("Herunterfahren", "POWER", startX + 110.0f, startY + stepY*3, triggerShutdown, dummyShutdownMin);
     if (triggerShutdown) {
         system("shutdown /s /t 0");
+    }
+
+    DrawDesktopIcon("RAM Test", "RAM", startX + 110.0f, startY + stepY*4, showRamTest, minRamTest);
+
+    bool launchGpuStress = false; bool dummyGpuStressMin = false;
+    DrawDesktopIcon("GPU Stresstest", "GPU", startX + 110.0f, startY + stepY*5, launchGpuStress, dummyGpuStressMin);
+    if (launchGpuStress) {
+        std::wstring err;
+        launcher.LaunchTool(L"FurMark", err);
     }
 }
 
@@ -519,6 +729,7 @@ void GuiController::DrawTaskbar(void* hwnd, float screenWidth, float screenHeigh
     DrawTaskbarButton("Reparatur", showRepair, minRepair, focusRepair, "Systemreparatur & Wartung");
     DrawTaskbarButton("Batterie Test", showBattery, minBattery, focusBattery, "Batterie-Test & Zustand");
     DrawTaskbarButton("CPU Stresstest", showStress, minStress, focusStress, "CPU Stresstest");
+    DrawTaskbarButton("RAM Test", showRamTest, minRamTest, focusRamTest, "RAM Test & Diagnose");
     DrawTaskbarButton("Handbuch", showGuide, minGuide, focusGuide, "System-Handbuch");
 
     // 3. Tray Area (Right side)
@@ -572,10 +783,11 @@ void GuiController::DrawStartMenu(float screenWidth, float screenHeight, bool& t
 
     auto DrawStartMenuLink = [](const char* label, const wchar_t* target) {
         if (ImGui::Selectable(label)) {
-            ShellExecuteW(NULL, L"open", target, NULL, NULL, SW_SHOWNORMAL);
+            LaunchShellCommand(target);
         }
     };
 
+#ifdef _WIN32
     DrawStartMenuLink("Eingabeaufforderung (CMD)", L"cmd.exe");
     DrawStartMenuLink("Registrierungs-Editor (Regedit)", L"regedit.exe");
     DrawStartMenuLink("Datenträgerverwaltung (Diskmgmt)", L"diskmgmt.msc");
@@ -594,6 +806,25 @@ void GuiController::DrawStartMenu(float screenWidth, float screenHeight, bool& t
     if (ImGui::Selectable("System Herunterfahren")) {
         system("shutdown /s /t 0");
     }
+#else
+    DrawStartMenuLink("Terminal Konsole", L"xterm");
+    DrawStartMenuLink("GParted Partitionsmanager", L"gparted");
+    DrawStartMenuLink("Htop Taskmanager", L"xterm -e htop");
+    DrawStartMenuLink("GSmartControl Festplatten-Test", L"gsmartcontrol");
+
+    ImGui::Spacing(); ImGui::Separator(); ImGui::Spacing();
+
+    // System actions
+    ImGui::TextColored(ImVec4(0.85f, 0.15f, 0.15f, 1.00f), "SYSTEM AKTIONEN");
+    ImGui::Spacing();
+
+    if (ImGui::Selectable("System Neustarten")) {
+        system("sudo systemctl reboot || sudo reboot &");
+    }
+    if (ImGui::Selectable("System Herunterfahren")) {
+        system("sudo systemctl poweroff || sudo poweroff &");
+    }
+#endif
     ImGui::Separator();
     if (ImGui::Selectable("Beenden (Shell Exit)")) {
         triggerClose = true;
@@ -631,8 +862,8 @@ void GuiController::DrawDesktopIcon(const char* label, const char* symbolType, f
     ImGui::Text("%s", label);
     ImGui::PopTextWrapPos();
 
-    // Action execution on double click
-    if (clicked && ImGui::IsMouseDoubleClicked(0)) {
+    // Action execution on single click
+    if (clicked) {
         showTarget = true;
         minTarget = false; // Restore from taskbar
         ImGui::SetNextWindowFocus();
@@ -737,12 +968,54 @@ void GuiController::RenderVectorIcon(const char* iconType, ImVec2 pos, float siz
         dl->AddLine(ImVec2(pos.x + size*0.32f, pos.y), ImVec2(pos.x + size*0.15f, pos.y - size*0.1f), cyanColor, 2.0f);
         dl->AddLine(ImVec2(pos.x + size*0.32f, pos.y), ImVec2(pos.x + size*0.45f, pos.y - size*0.1f), cyanColor, 2.0f);
     }
+    else if (strcmp(iconType, "RAM") == 0) {
+        // RAM stick outline (horizontal)
+        float rw = size * 0.76f;
+        float rh = size * 0.32f;
+        dl->AddRect(ImVec2(pos.x - rw*0.5f, pos.y - rh*0.5f), ImVec2(pos.x + rw*0.5f, pos.y + rh*0.5f), cyanColor, 2.0f, 0, 1.5f);
+        // Memory chips (3 small rectangles inside)
+        float cw = rw * 0.2f;
+        float ch = rh * 0.5f;
+        dl->AddRectFilled(ImVec2(pos.x - rw*0.35f, pos.y - ch*0.5f), ImVec2(pos.x - rw*0.35f + cw, pos.y + ch*0.5f), cyanColor, 1.0f);
+        dl->AddRectFilled(ImVec2(pos.x - cw*0.5f, pos.y - ch*0.5f), ImVec2(pos.x + cw*0.5f, pos.y + ch*0.5f), cyanColor, 1.0f);
+        dl->AddRectFilled(ImVec2(pos.x + rw*0.35f - cw, pos.y - ch*0.5f), ImVec2(pos.x + rw*0.35f, pos.y + ch*0.5f), cyanColor, 1.0f);
+        // Pin connectors at the bottom
+        float startPinX = pos.x - rw*0.45f;
+        float pinY = pos.y + rh*0.5f;
+        for (int i = 0; i < 8; ++i) {
+            dl->AddLine(ImVec2(startPinX + i * (rw*0.9f / 7.0f), pinY), ImVec2(startPinX + i * (rw*0.9f / 7.0f), pinY + 3.0f), cyanColor, 1.0f);
+        }
+    }
+    else if (strcmp(iconType, "GPU") == 0) {
+        // GPU card body (horizontal)
+        float gw = size * 0.76f;
+        float gh = size * 0.45f;
+        dl->AddRect(ImVec2(pos.x - gw*0.5f, pos.y - gh*0.5f), ImVec2(pos.x + gw*0.5f, pos.y + gh*0.5f), cyanColor, 2.0f, 0, 2.0f);
+        // Bracket on the left
+        dl->AddLine(ImVec2(pos.x - gw*0.5f - 2.5f, pos.y - gh*0.6f), ImVec2(pos.x - gw*0.5f - 2.5f, pos.y + gh*0.6f), cyanColor, 2.0f);
+        // Cool fan in the center
+        dl->AddCircle(pos, gh*0.38f, cyanColor, 12, 1.5f);
+        // Fan blades (3 blades)
+        for (int i = 0; i < 3; ++i) {
+            float angle = i * 3.1415f / 3.0f;
+            float dx = cos(angle) * gh*0.38f;
+            float dy = sin(angle) * gh*0.38f;
+            dl->AddLine(ImVec2(pos.x - dx, pos.y - dy), ImVec2(pos.x + dx, pos.y + dy), cyanColor, 1.0f);
+        }
+        // PCI slot connector pins at the bottom
+        float startPinX = pos.x - gw*0.35f;
+        float pinY = pos.y + gh*0.5f;
+        for (int i = 0; i < 6; ++i) {
+            dl->AddLine(ImVec2(startPinX + i * (gw*0.7f / 5.0f), pinY), ImVec2(startPinX + i * (gw*0.7f / 5.0f), pinY + 3.0f), cyanColor, 1.0f);
+        }
+    }
 }
 
 void GuiController::DrawDashboard(void* hwnd) {
+    float totalWidth = ImGui::GetContentRegionAvail().x;
     ImGui::Columns(2, "DashboardLayout", false);
     ImGui::SetColumnWidth(0, 360.0f);
-    ImGui::SetColumnWidth(1, ImGui::GetContentRegionAvail().x - 360.0f);
+    ImGui::SetColumnWidth(1, totalWidth - 360.0f);
 
     // Left child: System details
     ImGui::BeginChild("SysDetailsCard", ImVec2(0, 0), true);
@@ -773,6 +1046,25 @@ void GuiController::DrawDashboard(void* hwnd) {
     DrawField("Grafikkarte (GPU)", currentDiag.gpuName);
 
     ImGui::Spacing(); ImGui::Separator(); ImGui::Spacing();
+
+    // Driver Import Status
+    if (g_importingDrivers) {
+        ImGui::TextColored(ImVec4(1.00f, 0.60f, 0.00f, 1.00f), "Treiber-Status:");
+        ImGui::SameLine();
+        std::string statusNarrow = WideToNarrow(g_driverImportStatus);
+        ImGui::TextWrapped("%s", statusNarrow.c_str());
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImGui::Spacing();
+    } else if (!g_driverImportStatus.empty()) {
+        ImGui::TextColored(ImVec4(0.062f, 0.725f, 0.505f, 1.0f), "Treiber-Status:");
+        ImGui::SameLine();
+        std::string statusNarrow = WideToNarrow(g_driverImportStatus);
+        ImGui::TextWrapped("%s", statusNarrow.c_str());
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImGui::Spacing();
+    }
 
     // Values Recording card inside
     ImGui::TextColored(ImVec4(0.00f, 0.76f, 1.00f, 1.00f), "PR\u00DCFPROTOKOLL AUFZEICHNUNG");
@@ -1044,9 +1336,10 @@ void GuiController::DrawRepair(void* hwnd) {
 }
 
 void GuiController::DrawBattery(void* hwnd) {
+    float totalWidth = ImGui::GetContentRegionAvail().x;
     ImGui::Columns(2, "BatteryLayout", false);
     ImGui::SetColumnWidth(0, 360.0f);
-    ImGui::SetColumnWidth(1, ImGui::GetContentRegionAvail().x - 360.0f);
+    ImGui::SetColumnWidth(1, totalWidth - 360.0f);
 
     // Left child: Battery status metrics
     ImGui::BeginChild("BatteryInfoCard", ImVec2(0, 0), true);
@@ -1112,66 +1405,62 @@ void GuiController::DrawBattery(void* hwnd) {
                 }
 
                 // Launch browser with video URL
-                ShellExecuteW(NULL, L"open", L"https://www.youtube.com/watch?v=yq6c8h0Z3-Q", NULL, NULL, SW_SHOWNORMAL);
+                LaunchShellCommand(L"https://www.youtube.com/watch?v=yq6c8h0Z3-Q");
                 SetStatus(L"YouTube-Stresstest im Browser gestartet.", false);
             }
             ImGui::SameLine();
             if (batteryTestCompleted) {
-                if (ImGui::Button("PDF-Bericht speichern", ImVec2(180, 28))) {
-                    wchar_t savePath[MAX_PATH] = L"Batteriebericht.pdf";
-                    OPENFILENAMEW ofn = {0};
-                    ofn.lStructSize = sizeof(ofn);
-                    ofn.hwndOwner = (HWND)hwnd;
-                    ofn.lpstrFilter = L"PDF-Dateien (*.pdf)\0*.pdf\0";
-                    ofn.lpstrFile = savePath;
-                    ofn.nMaxFile = MAX_PATH;
-                    ofn.Flags = OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT | OFN_NOCHANGEDIR;
-                    ofn.lpstrDefExt = L"pdf";
+                static char filenameBuffer[128] = "Batteriebericht.pdf";
+                ImGui::SetNextItemWidth(180);
+                ImGui::InputText("##pdf_filename", filenameBuffer, IM_ARRAYSIZE(filenameBuffer));
+                ImGui::SameLine();
+                if (ImGui::Button("Bericht speichern", ImVec2(130, 28))) {
+                    wchar_t savePath[MAX_PATH];
+                    std::wstring wsave = NarrowToWide(filenameBuffer);
+                    wcsncpy(savePath, wsave.c_str(), MAX_PATH);
 
-                    if (GetSaveFileNameW(&ofn)) {
-                        int elapsed = 1800 - batteryTestRemainingSeconds;
-                        int remMins = elapsed / 60;
-                        int remSecs = elapsed % 60;
-                        
-                        auto nowSys = std::chrono::system_clock::now();
-                        auto now_t = std::chrono::system_clock::to_time_t(nowSys);
-                        auto start_t = std::chrono::system_clock::to_time_t(nowSys - std::chrono::seconds(elapsed));
-                        struct tm ti_s, ti_e;
-                        localtime_s(&ti_s, &start_t);
-                        localtime_s(&ti_e, &now_t);
+                    int elapsed = 1800 - batteryTestRemainingSeconds;
+                    int remMins = elapsed / 60;
+                    int remSecs = elapsed % 60;
+                    
+                    auto nowSys = std::chrono::system_clock::now();
+                    auto now_t = std::chrono::system_clock::to_time_t(nowSys);
+                    auto start_t = std::chrono::system_clock::to_time_t(nowSys - std::chrono::seconds(elapsed));
+                    struct tm ti_s, ti_e;
+                    localtime_s(&ti_s, &start_t);
+                    localtime_s(&ti_e, &now_t);
 
-                        wchar_t startStr[64], endStr[64], durStr[64];
-                        wcsftime(startStr, sizeof(startStr)/sizeof(wchar_t), L"%d.%m.%Y %H:%M:%S", &ti_s);
-                        wcsftime(endStr, sizeof(endStr)/sizeof(wchar_t), L"%d.%m.%Y %H:%M:%S", &ti_e);
-                        swprintf_s(durStr, L"%02d:%02d:%02d", elapsed / 3600, remMins, remSecs);
+                    wchar_t startStr[64], endStr[64], durStr[64];
+                    wcsftime(startStr, sizeof(startStr)/sizeof(wchar_t), L"%d.%m.%Y %H:%M:%S", &ti_s);
+                    wcsftime(endStr, sizeof(endStr)/sizeof(wchar_t), L"%d.%m.%Y %H:%M:%S", &ti_e);
+                    swprintf_s(durStr, L"%02d:%02d:%02d", elapsed / 3600, remMins, remSecs);
 
-                        bool ok = PdfWriter::GenerateBatteryReport(
-                            savePath,
-                            currentDiag.cpuName,
-                            currentDiag.gpuName,
-                            currentDiag.ramTotalGb > 0 ? (std::to_wstring(currentDiag.ramTotalGb).substr(0, 4) + L" GB") : L"-- GB",
-                            currentDiag.sysModel,
-                            currentDiag.sysSerialNumber,
-                            currentDiag.mbModel,
-                            currentBattery.GetHealthDisplay(),
-                            currentBattery.manufacturer,
-                            currentBattery.deviceName,
-                            currentBattery.chemistry,
-                            currentBattery.GetDesignCapacityDisplay(),
-                            currentBattery.GetFullChargeCapacityDisplay(),
-                            startStr,
-                            endStr,
-                            durStr,
-                            batteryTestStartPercent,
-                            batteryTestCurrentPercent,
-                            batteryTestLog
-                        );
+                    bool ok = PdfWriter::GenerateBatteryReport(
+                        savePath,
+                        currentDiag.cpuName,
+                        currentDiag.gpuName,
+                        currentDiag.ramTotalGb > 0 ? (std::to_wstring(currentDiag.ramTotalGb).substr(0, 4) + L" GB") : L"-- GB",
+                        currentDiag.sysModel,
+                        currentDiag.sysSerialNumber,
+                        currentDiag.mbModel,
+                        currentBattery.GetHealthDisplay(),
+                        currentBattery.manufacturer,
+                        currentBattery.deviceName,
+                        currentBattery.chemistry,
+                        currentBattery.GetDesignCapacityDisplay(),
+                        currentBattery.GetFullChargeCapacityDisplay(),
+                        startStr,
+                        endStr,
+                        durStr,
+                        batteryTestStartPercent,
+                        batteryTestCurrentPercent,
+                        batteryTestLog
+                    );
 
-                        if (ok) {
-                            SetStatus(L"PDF-Batteriebericht gespeichert!", false);
-                        } else {
-                            SetStatus(L"Fehler beim Erstellen des PDF-Berichts.", true);
-                        }
+                    if (ok) {
+                        SetStatus(L"PDF-Batteriebericht gespeichert!", false);
+                    } else {
+                        SetStatus(L"Fehler beim Erstellen des PDF-Berichts.", true);
                     }
                 }
             }
@@ -1233,9 +1522,10 @@ void GuiController::DrawBattery(void* hwnd) {
 }
 
 void GuiController::DrawCpuStress(void* hwnd) {
+    float totalWidth = ImGui::GetContentRegionAvail().x;
     ImGui::Columns(2, "CpuStressLayout", false);
     ImGui::SetColumnWidth(0, 360.0f);
-    ImGui::SetColumnWidth(1, ImGui::GetContentRegionAvail().x - 360.0f);
+    ImGui::SetColumnWidth(1, totalWidth - 360.0f);
 
     // Left child: Controls
     ImGui::BeginChild("CpuStressControlsCard", ImVec2(0, 0), true);
@@ -1480,5 +1770,143 @@ void GuiController::ApplyTheme() {
     style.ScrollbarRounding = 9.0f;
     style.GrabRounding      = 4.0f;
     style.TabRounding       = 4.0f;
+}
+
+void GuiController::DrawRamTest(void* hwnd) {
+    float totalWidth = ImGui::GetContentRegionAvail().x;
+    ImGui::Columns(2, "RamTestLayout", false);
+    ImGui::SetColumnWidth(0, 360.0f);
+    ImGui::SetColumnWidth(1, totalWidth - 360.0f);
+
+    // Left child: Controls
+    ImGui::BeginChild("RamTestControlsCard", ImVec2(0, 0), true);
+    ImGui::TextColored(ImVec4(0.00f, 0.76f, 1.00f, 1.00f), "RAM STABILIT\u00C4TSPR\u00DCFUNG");
+    ImGui::Spacing(); ImGui::Separator(); ImGui::Spacing();
+
+    // RAM size slider
+    int maxRamGb = (int)currentDiag.ramTotalGb;
+    if (maxRamGb <= 0) maxRamGb = 16;
+    int maxTestSize = maxRamGb - 1; // Leave 1 GB for OS
+    if (maxTestSize < 1) maxTestSize = 1;
+
+    ImGui::Text("Testgr\u00F6\u00DFe in GB (max. %d GB):", maxTestSize);
+    ImGui::SliderInt("##RamSize", &ramTestSelectedSizeGb, 1, maxTestSize);
+    ImGui::Spacing();
+
+    ImGui::Text("Verf\u00FCgbarer RAM: %.1f GB", currentDiag.ramTotalGb - currentDiag.ramUsedGb);
+    ImGui::Spacing(); ImGui::Separator(); ImGui::Spacing();
+
+    bool isRamRunning = ramTest.IsRunning();
+    RamTestProgress prog = ramTest.GetProgress();
+
+    static bool wasRamRunning = false;
+    if (!isRamRunning && wasRamRunning) {
+        if (prog.isCompleted) {
+            SetStatus(prog.errorsFound == 0 ? L"RAM-Test erfolgreich abgeschlossen." : L"RAM-Test beendet mit FEHLERN!", prog.errorsFound > 0);
+        }
+    }
+    wasRamRunning = isRamRunning;
+
+    if (!isRamRunning) {
+        if (ImGui::Button("RAM Test starten", ImVec2(ImGui::GetContentRegionAvail().x, 32))) {
+            ramTestLog.clear();
+            auto nowTime = std::chrono::system_clock::now();
+            auto t = std::chrono::system_clock::to_time_t(nowTime);
+            struct tm ti; localtime_s(&ti, &t);
+
+            wchar_t startLog[128];
+            swprintf_s(startLog, L"[%02d:%02d:%02d] - RAM Stabilit\u00E4tstest gestartet (%d GB)", 
+                ti.tm_hour, ti.tm_min, ti.tm_sec, ramTestSelectedSizeGb);
+            ramTestLog.push_back(startLog);
+
+            size_t sizeInBytes = (size_t)ramTestSelectedSizeGb * 1024 * 1024 * 1024;
+            ramTest.Start(sizeInBytes);
+            SetStatus(L"RAM-Test gestartet.", false);
+        }
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.85f, 0.15f, 0.15f, 1.00f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.95f, 0.25f, 0.25f, 1.00f));
+        if (ImGui::Button("Test stoppen", ImVec2(ImGui::GetContentRegionAvail().x, 32))) {
+            ramTest.Stop();
+            ramTestLog.push_back(L"RAM-Test manuell abgebrochen.");
+            SetStatus(L"RAM-Test gestoppt.", false);
+        }
+        ImGui::PopStyleColor(2);
+
+        ImGui::Spacing(); ImGui::Spacing();
+        
+        if (prog.isAllocationPhase) {
+            ImGui::Text("Status: Reserviere Arbeitsspeicher...");
+        } else {
+            ImGui::Text("Durchgang: %d von 3", prog.currentPass);
+        }
+    }
+
+    ImGui::EndChild();
+
+    // Right child: real-time progress and logs
+    ImGui::NextColumn();
+    ImGui::BeginChild("RamTestOutputs", ImVec2(0, 0), false);
+
+    // Progress Box
+    ImGui::BeginChild("RamTestProgressBox", ImVec2(ImGui::GetContentRegionAvail().x, 115), true);
+    ImGui::TextColored(ImVec4(0.00f, 0.76f, 1.00f, 1.00f), "TEST VERLAUF");
+    ImGui::Spacing();
+
+    if (isRamRunning || prog.isCompleted) {
+        std::string statNarrow = WideToNarrow(prog.statusMsg);
+        ImGui::Text("Aktivit\u00E4t: %s", statNarrow.c_str());
+        ImGui::ProgressBar(prog.percentDone, ImVec2(-1.0f, 20.0f));
+
+        double testedGb = (double)prog.bytesTested / (1024.0 * 1024.0 * 1024.0);
+        double totalGb = (double)prog.bytesTotal / (1024.0 * 1024.0 * 1024.0);
+        ImGui::Text("Gepr\u00FCft: %.2f GB / %.2f GB", testedGb, totalGb);
+    } else {
+        ImGui::Text("Status: Bereit f\u00FCr Stabilit\u00E4tspr\u00FCfung.");
+        ImGui::ProgressBar(0.0f, ImVec2(-1.0f, 20.0f));
+    }
+    ImGui::EndChild();
+    ImGui::Spacing();
+
+    // Error counter
+    ImGui::BeginChild("RamTestErrorsBox", ImVec2(ImGui::GetContentRegionAvail().x, 50), true);
+    ImVec4 errCol = prog.errorsFound > 0 ? ImVec4(0.95f, 0.25f, 0.25f, 1.00f) : ImVec4(0.00f, 0.76f, 1.00f, 1.00f);
+    ImGui::TextColored(errCol, "Gefundene Speicherfehler: %d", (int)prog.errorsFound);
+    ImGui::EndChild();
+    ImGui::Spacing();
+
+    // Live logs
+    ImGui::BeginChild("RamTestLogsBox", ImVec2(ImGui::GetContentRegionAvail().x, 0), true);
+    ImGui::TextColored(ImVec4(0.00f, 0.76f, 1.00f, 1.00f), "MESS- PROTOKOLL");
+    ImGui::Spacing(); ImGui::Separator(); ImGui::Spacing();
+    
+    // Periodically add state to log if it changes
+    static std::wstring lastStatusMsg = L"";
+    if (isRamRunning && prog.statusMsg != lastStatusMsg) {
+        auto nowTime = std::chrono::system_clock::now();
+        auto t = std::chrono::system_clock::to_time_t(nowTime);
+        struct tm ti; localtime_s(&ti, &t);
+        wchar_t timeBuf[64];
+        swprintf_s(timeBuf, L"[%02d:%02d:%02d] - ", ti.tm_hour, ti.tm_min, ti.tm_sec);
+        ramTestLog.push_back(std::wstring(timeBuf) + prog.statusMsg);
+        lastStatusMsg = prog.statusMsg;
+    }
+    
+    for (auto it = ramTestLog.rbegin(); it != ramTestLog.rend(); ++it) {
+        std::string l = WideToNarrow(*it);
+        ImGui::Text("%s", l.c_str());
+    }
+    ImGui::EndChild();
+
+    ImGui::EndChild();
+}
+
+void GuiController::RenderGui() {
+    Update();
+    bool isMaximized = true;
+    bool triggerClose = false;
+    bool triggerMinimize = false;
+    bool triggerMaximize = false;
+    Draw(nullptr, isMaximized, triggerClose, triggerMinimize, triggerMaximize);
 }
 

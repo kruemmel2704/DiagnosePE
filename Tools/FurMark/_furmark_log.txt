@@ -1,0 +1,56 @@
+(18:22:35:472)	FurMark 2.10.2.0 (build: Oct 22 2025@12:39:49)
+(18:22:35:472)	(c)2007-2025 Geeks3D
+(18:22:35:472)	homepage: https://www.geeks3d.com/furmark/
+(18:22:35:472)	discord server : https://geeks3d.com/discord/
+(18:22:35:472)	FurMark (GeeXLab engine) initialization...
+(18:22:35:472)	command line: furmark --demo furmark-gl --width 1280 --height 720 
+(18:22:35:472)	FurMark home directory: C:\Users\Lars\Desktop\Projekte\DiagnosePE\Tools\FurMark\
+(18:22:35:472)	[stb] STB image loader. Supported formats: *.JPEG, *.PNG, *.TGA, *.BMP, *.PSD, *.GIF, *.HDR, *.PIC
+(18:22:35:472)	[tinyexr] EXR image loader.
+(18:22:35:472)	[lib3ds] Lib3ds loader (core plugin).
+(18:22:35:472)	[ObjLoaderV1] OBJ 3D loader (core plugin).
+(18:22:35:472)	[ObjLoaderV2] OBJ loader based on Tiny OBJ Loader (core plugin).
+(18:22:35:472)	[STL] STL (StereoLithography) 3D loader (core plugin).
+(18:22:35:472)	[glTF] glTF 3D loader (core plugin).
+(18:22:35:472)	[SQLite3] SQLite3 version 3.50.4
+(18:22:35:472)	GraphX Core 0.60.1.0 (codename: Dirac) initialization ok.
+(18:22:35:472)	Windows version: Windows 11 build 26200
+(18:22:35:472)	HW platform type: PC
+(18:22:35:472)	SW platform type: Windows 64-bit
+(18:22:35:517)	[GpuMonitor] Operating system detected: Windows 11 build 26200
+(18:22:35:524)	[GpuMonitor] NV: physical GPU(s): 1 - logical GPU(s): 1
+(18:22:35:576)	[GpuMonitor] Num GPUs detected: 1
+(18:22:35:576)	[GpuMonitor] > GPU0
+(18:22:35:576)	[GpuMonitor]   - name: NVIDIA GeForce RTX 4080
+(18:22:35:576)	[GpuMonitor]   - PCI codes: 0x10DE-0x2704
+(18:22:35:576)	[GpuMonitor]   - Bus ID: 9
+(18:22:35:576)	[GpuMonitor]   - VBIOS: 95.03.1e.00.3e
+(18:22:35:576)	[GpuMonitor]   - core temperature: 42 degC
+(18:22:35:576)	[GpuMonitor]   - driver: 527.56
+(18:22:35:576)	FurMark (GeeXLab engine) started ok.
+(18:22:35:576)	system DPI: 96
+(18:22:35:609)	3D window size: 1296 x 759
+(18:22:35:631)	current DPI: xdpi(96), ydpi(96) - DPI scale: 1.0
+(18:22:35:719)	GL_RENDERER: NVIDIA GeForce RTX 4080/PCIe/SSE2
+(18:22:35:719)	GL_VENDOR: NVIDIA Corporation
+(18:22:35:719)	GL_VERSION: 3.2.0 NVIDIA 527.56
+(18:22:35:719)	GL_SHADING_LANGUAGE_VERSION: 1.50 NVIDIA via Cg compiler
+(18:22:35:719)	OpenGL version detected: 3.2
+(18:22:35:719)	OpenGL extensions: 433
+(18:22:35:774)	[ArtifactScanner] Artifact scanner for GPU stability checking.
+(18:22:41:594)	[ Demo Quick Stats ]
+(18:22:41:595)	- demo                 : FurMark (GL) (built-in: YES)
+(18:22:41:595)	- renderer             : NVIDIA GeForce RTX 4080/PCIe/SSE2
+(18:22:41:595)	- 3D API               : OpenGL 3.2.0 NVIDIA 527.56
+(18:22:41:595)	- resolution           : 1280x720
+(18:22:41:595)	- frames               : 3245
+(18:22:41:595)	- duration             : 5766 ms
+(18:22:41:595)	- FPS (min/avg/max)    : 552 / 563 / 575
+(18:22:41:595)	- GPU 0: NVIDIA GeForce RTX 4080 [10DE-2704]
+(18:22:41:595)	  .max temperature: 67°C
+(18:22:41:602)	  .max usage: 100%
+(18:22:41:602)	  .max core clock: 2536 MHz
+(18:22:41:602)	  .min core clock: 2506 MHz
+(18:22:41:717)	FurMark (GeeXLab engine) is shutting down...
+(18:22:41:719)	GraphX Core stopped ok.
+(18:22:41:719)	FurMark (GeeXLab engine) shutdown ok.
