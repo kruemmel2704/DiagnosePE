@@ -633,30 +633,30 @@ void GuiController::DrawDesktop(void* hwnd, float screenWidth, float screenHeigh
     DrawDesktopIcon("CPU Stresstest", "STRESS", startX, startY + stepY*4, showStress, minStress);
     DrawDesktopIcon("Handbuch", "GUIDE", startX, startY + stepY*5, showGuide, minGuide);
 
-    // Shell links (CMD / Device Manager)
+    // Shell links (Terminal / GParted)
     bool launchCmd = false; bool dummyCmdMin = false;
-    DrawDesktopIcon("CMD Shell", "CMD", startX + 110.0f, startY, launchCmd, dummyCmdMin);
+    DrawDesktopIcon("Terminal", "CMD", startX + 110.0f, startY, launchCmd, dummyCmdMin);
     if (launchCmd) {
-        LaunchShellCommand(L"cmd.exe");
+        LaunchShellCommand(L"xterm -title 'Terminal' -bg '#1a1d24' -fg '#c5cdd8' -fa 'Monospace' -fs 11 &");
     }
 
     bool launchDevmgmt = false; bool dummyDevmgmtMin = false;
-    DrawDesktopIcon("Geräte Manager", "DEVMGMT", startX + 110.0f, startY + stepY, launchDevmgmt, dummyDevmgmtMin);
+    DrawDesktopIcon("GParted", "DEVMGMT", startX + 110.0f, startY + stepY, launchDevmgmt, dummyDevmgmtMin);
     if (launchDevmgmt) {
-        LaunchShellCommand(L"devmgmt.msc");
+        LaunchShellCommand(L"gparted &");
     }
 
     // Power Actions (Reboot / Shutdown)
     bool triggerReboot = false; bool dummyRebootMin = false;
     DrawDesktopIcon("PC Neustarten", "REBOOT", startX + 110.0f, startY + stepY*2, triggerReboot, dummyRebootMin);
     if (triggerReboot) {
-        system("shutdown /r /t 0");
+        system("sudo reboot &");
     }
 
     bool triggerShutdown = false; bool dummyShutdownMin = false;
     DrawDesktopIcon("Herunterfahren", "POWER", startX + 110.0f, startY + stepY*3, triggerShutdown, dummyShutdownMin);
     if (triggerShutdown) {
-        system("shutdown /s /t 0");
+        system("sudo poweroff &");
     }
 
     DrawDesktopIcon("RAM Test", "RAM", startX + 110.0f, startY + stepY*4, showRamTest, minRamTest);
@@ -664,8 +664,7 @@ void GuiController::DrawDesktop(void* hwnd, float screenWidth, float screenHeigh
     bool launchGpuStress = false; bool dummyGpuStressMin = false;
     DrawDesktopIcon("GPU Stresstest", "GPU", startX + 110.0f, startY + stepY*5, launchGpuStress, dummyGpuStressMin);
     if (launchGpuStress) {
-        std::wstring err;
-        launcher.LaunchTool(L"FurMark", err);
+        system("glmark2 --fullscreen &");
     }
 }
 
@@ -1286,11 +1285,11 @@ void GuiController::DrawTools(void* hwnd) {
 
 void GuiController::DrawRepair(void* hwnd) {
     ImGui::BeginChild("SystemRepairPage", ImVec2(0, 0), false);
-    ImGui::TextColored(ImVec4(0.00f, 0.76f, 1.00f, 1.00f), "WINDOWS SYSTEM REPARATUR-Shortcuts");
+    ImGui::TextColored(ImVec4(0.00f, 0.76f, 1.00f, 1.00f), "SYSTEM-REPARATUR & OFFLINE-WARTUNG (LINUX & WINDOWS)");
     ImGui::Spacing(); ImGui::Separator(); ImGui::Spacing();
 
     auto DrawRepairCard = [&](const char* title, const char* desc, const wchar_t* cmdKey) {
-        ImGui::BeginChild(title, ImVec2(ImGui::GetContentRegionAvail().x, 90), true);
+        ImGui::BeginChild(title, ImVec2(ImGui::GetContentRegionAvail().x, 95), true);
         ImGui::Columns(2, title, false);
         ImGui::SetColumnWidth(0, ImGui::GetWindowWidth() - 200.0f);
         ImGui::SetColumnWidth(1, 180.0f);
@@ -1303,7 +1302,7 @@ void GuiController::DrawRepair(void* hwnd) {
         // Col 1
         ImGui::NextColumn();
         ImGui::SetCursorPosY(20.0f);
-        if (ImGui::Button("Befehl ausf\u00FChren", ImVec2(ImGui::GetContentRegionAvail().x, 30))) {
+        if (ImGui::Button("Ausführen", ImVec2(ImGui::GetContentRegionAvail().x, 30))) {
             std::wstring descOut;
             if (SystemRepair::RunRepair(cmdKey, descOut)) {
                 SetStatus(L"Wird ausgeführt: " + descOut, false);
@@ -1316,21 +1315,25 @@ void GuiController::DrawRepair(void* hwnd) {
         ImGui::Spacing();
     };
 
-    DrawRepairCard("System File Checker (SFC)", 
-                   "Überprüft alle geschützten Systemdateien und ersetzt beschädigte oder falsche Versionen durch Originaldateien (SFC /scannow).", 
-                   L"sfc");
+    DrawRepairCard("Linux Dateisystem-Check (fsck)", 
+                   "Überprüft und repariert Linux-Dateisysteme auf den primären Festplatten (/dev/sda1 oder /dev/nvme0n1p1).", 
+                   L"fsck");
     
-    DrawRepairCard("DISM Restore Health", 
-                   "Scant das Windows-Image auf Beschädigungen und repariert sie automatisch online über Windows Update (DISM /RestoreHealth).", 
-                   L"dism_restore");
+    DrawRepairCard("Oberflächenprüfung (badblocks)", 
+                   "Scant das Speichermedium auf defekte Blöcke im read-only Modus und gibt den Status aus.", 
+                   L"badblocks");
 
-    DrawRepairCard("DISM Check Health", 
-                   "Schnelle Überprüfung, ob das Image als beschädigt markiert ist (DISM /CheckHealth).", 
-                   L"dism_check");
+    DrawRepairCard("GRUB Bootloader Reparatur", 
+                   "Generiert die GRUB-Bootloader-Konfiguration auf dem Live-System neu (grub-mkconfig).", 
+                   L"grub_repair");
 
-    DrawRepairCard("Chkdsk C:", 
-                   "Überprüft das Dateisystem und die Dateisystem-Metadaten des Laufwerks C: auf Fehler im Nur-Lese-Modus (Chkdsk C:).", 
-                   L"chkdsk");
+    DrawRepairCard("Windows NTFS Reparatur (ntfsfix)", 
+                   "Repariert korrupte NTFS-Partitionen, behebt dirty Flags und behebt typische Einhänge-Probleme.", 
+                   L"ntfsfix");
+
+    DrawRepairCard("Windows Passwort-Reset (chntpw)", 
+                   "Setzt lokale Passwörter von Windows-Benutzern offline zurück oder entsperrt gesperrte Konten.", 
+                   L"chntpw");
 
     ImGui::EndChild();
 }

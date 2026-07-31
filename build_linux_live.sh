@@ -2,190 +2,137 @@
 set -e
 
 echo "=========================================================="
-echo "    DiagnoseLinux Live Kernel & ISO Image Builder        "
+echo "    DiagnoseLinux Arch Live ISO Builder (archiso)         "
 echo "=========================================================="
 
 PROJECT_DIR="$(pwd)"
-BUILD_DIR="/tmp/diagnose_live_build"
+BUILD_DIR="/var/tmp/diagnose_live_build"
 ISO_NAME="DiagnoseLinux.iso"
-ROOTFS_DIR="${BUILD_DIR}/rootfs"
-ISO_DIR="${BUILD_DIR}/iso"
+PROFILE_DIR="${BUILD_DIR}/archiso-profile"
+OUT_DIR="${BUILD_DIR}/out"
+WORK_DIR="${BUILD_DIR}/work"
 
-# Safely unmount leftover mounts from previous runs if any
-sudo umount -l "${ROOTFS_DIR}/dev" 2>/dev/null || true
-sudo umount -l "${ROOTFS_DIR}/proc" 2>/dev/null || true
-sudo umount -l "${ROOTFS_DIR}/sys" 2>/dev/null || true
-sudo rm -rf "${BUILD_DIR}"
-
-# 1. Install prerequisites if running on Debian/Ubuntu host
-if command -v apt-get &> /dev/null; then
-    echo "[+] Installing host build prerequisites..."
-    sudo apt-get update
-    sudo apt-get install -y debootstrap xorriso squashfs-tools grub-pc-bin grub-efi-amd64-bin mtools pkg-config
+# 1. Check if running on Arch Linux host
+if ! command -v pacman &> /dev/null; then
+    echo "[!] Dieser Build-Skript erfordert ein Arch Linux System oder WSL Arch Linux!"
+    exit 1
 fi
 
-# 2. Bootstrap Debian Bookworm Live Base System in native Linux ext4 (/tmp)
-echo "[+] Bootstrapping Debian 12 (Bookworm) Live System in ${ROOTFS_DIR}..."
-sudo mkdir -p "${ROOTFS_DIR}"
-sudo debootstrap --arch=amd64 bookworm "${ROOTFS_DIR}" http://deb.debian.org/debian/
+# Clean up build directory
+echo "[+] Bereinige alten Build-Ordner..."
+sudo rm -rf "${BUILD_DIR}"
+mkdir -p "${BUILD_DIR}" "${OUT_DIR}" "${WORK_DIR}"
 
-# Configure Debian Non-Free-Firmware Repositories inside rootfs
-cat << 'EOF' | sudo tee "${ROOTFS_DIR}/etc/apt/sources.list"
-deb http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
-deb http://deb.debian.org/debian-security bookworm-security main contrib non-free non-free-firmware
-deb http://deb.debian.org/debian bookworm-updates main contrib non-free non-free-firmware
+# Install host prerequisites if missing
+echo "[+] Installiere Host-Voraussetzungen..."
+sudo pacman -S --needed --noconfirm archiso cmake make gcc git sdl2 mesa mesa-utils openbox xterm smartmontools gparted gsmartcontrol lm_sensors memtester stress-ng pciutils usbutils dmidecode nvme-cli lshw htop ntfs-3g chntpw glmark2 pkgconf
+
+# 2. Copy the official releng profile
+echo "[+] Kopiere archiso releng Profil..."
+cp -r /usr/share/archiso/configs/releng "${PROFILE_DIR}"
+
+# Update file permissions in profiledef.sh to make our binaries executable
+sed -i 's|\["/usr/local/bin/livecd-sound"\]="0:0:755"|\["/usr/local/bin/livecd-sound"\]="0:0:755"\n  \["/usr/local/bin/DiagnoseLinux"\]="0:0:755"\n  \["/usr/local/bin/windows_repair.sh"\]="0:0:755"|' "${PROFILE_DIR}/profiledef.sh"
+
+# 3. Add packages to packages.x86_64
+echo "[+] Füge DiagnoseLinux-Pakete zum Profil hinzu..."
+cat << 'EOF' >> "${PROFILE_DIR}/packages.x86_64"
+xorg-server
+xorg-xinit
+openbox
+xterm
+sdl2
+mesa
+mesa-utils
+xf86-video-amdgpu
+nvidia-open
+nvidia-utils
+xf86-video-fbdev
+xf86-video-vesa
+smartmontools
+gparted
+gsmartcontrol
+lm_sensors
+memtester
+stress-ng
+pciutils
+usbutils
+dmidecode
+nvme-cli
+lshw
+htop
+ntfs-3g
+chntpw
+cmake
+make
+gcc
+glmark2
 EOF
 
-# Clean host build artifacts and copy clean source code into rootfs for target compilation
-echo "[+] Copying source files to chroot for native target compilation..."
-sudo rm -rf "${PROJECT_DIR}/build"
-sudo mkdir -p "${ROOTFS_DIR}/tmp/app_src"
-sudo cp -r "${PROJECT_DIR}/"* "${ROOTFS_DIR}/tmp/app_src/"
-
-# 3. Configure Chroot & System Packages
-echo "[+] Installing Kernel, Libraries & Compiling DiagnoseLinux inside target rootfs..."
-sudo mount --bind /dev "${ROOTFS_DIR}/dev"
-sudo mount --bind /proc "${ROOTFS_DIR}/proc"
-sudo mount --bind /sys "${ROOTFS_DIR}/sys"
-
-cat << 'EOF' | sudo chroot "${ROOTFS_DIR}" /bin/bash
-export DEBIAN_FRONTEND=noninteractive
-apt-get update
-apt-get install -y \
-    linux-image-amd64 \
-    live-boot \
-    initramfs-tools \
-    systemd-sysv \
-    xorg \
-    xinit \
-    matchbox-window-manager \
-    x11-xserver-utils \
-    libsdl2-2.0-0 \
-    libsdl2-dev \
-    libgl1-mesa-dev \
-    mesa-utils \
-    xserver-xorg-video-all \
-    cmake \
-    build-essential \
-    g++
-
-apt-get install -y --no-install-recommends \
-    firmware-linux-free \
-    firmware-realtek \
-    firmware-iwlwifi \
-    sudo \
-    smartmontools \
-    gsmartcontrol \
-    lm-sensors \
-    memtester \
-    stress-ng \
-    gparted \
-    pciutils \
-    usbutils \
-    dmidecode \
-    nvme-cli \
-    lshw \
-    htop \
-    xterm
-
-# Compile DiagnoseLinux natively inside Debian 12 rootfs
-echo "[+] Compiling C++ binary inside Debian 12 chroot..."
-cd /tmp/app_src
-rm -rf build
-mkdir -p build && cd build
+# 4. Compile DiagnoseLinux natively on the host
+echo "[+] Kompiliere DiagnoseLinux-Anwendung..."
+rm -rf "${PROJECT_DIR}/build"
+mkdir -p "${PROJECT_DIR}/build"
+cd "${PROJECT_DIR}/build"
 cmake ..
 make -j$(nproc)
-cp DiagnoseLinux /usr/local/bin/DiagnoseLinux
-chmod +x /usr/local/bin/DiagnoseLinux
-cd /
-rm -rf /tmp/app_src
+cd "${PROJECT_DIR}"
 
-# Create diagnose user
-useradd -m -s /bin/bash diagnose
-echo "diagnose:diagnose" | chpasswd
-usermod -aG sudo,video,input,render diagnose
-echo "diagnose ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-EOF
+# 5. Place application binaries and repair script into ISO structure
+echo "[+] Kopiere Dateien in das Live-Dateisystem..."
+mkdir -p "${PROFILE_DIR}/airootfs/usr/local/bin"
+cp "${PROJECT_DIR}/build/DiagnoseLinux" "${PROFILE_DIR}/airootfs/usr/local/bin/DiagnoseLinux"
+chmod +x "${PROFILE_DIR}/airootfs/usr/local/bin/DiagnoseLinux"
 
-# 4. Configure Autostart Kiosk Mode
-echo "[+] Configuring DiagnoseLinux Kiosk Shell..."
+cp "${PROJECT_DIR}/windows_repair.sh" "${PROFILE_DIR}/airootfs/usr/local/bin/windows_repair.sh"
+chmod +x "${PROFILE_DIR}/airootfs/usr/local/bin/windows_repair.sh"
 
-sudo mkdir -p "${ROOTFS_DIR}/home/diagnose"
-cat << 'EOF' | sudo tee "${ROOTFS_DIR}/home/diagnose/.xinitrc"
+# 6. Configure Autostart (kiosk mode)
+echo "[+] Konfiguriere Autostart (Kiosk-Modus)..."
+
+# Create Xinitrc configuration for root
+mkdir -p "${PROFILE_DIR}/airootfs/root"
+cat << 'EOF' > "${PROFILE_DIR}/airootfs/root/.xinitrc"
 #!/bin/bash
-xset s off 2>/dev/null || true
-xset -dpms 2>/dev/null || true
-xset s noblank 2>/dev/null || true
-matchbox-window-manager &
+# Start Openbox Window Manager in background
+openbox &
+# Launch the main diagnostic app in fullscreen/maximized mode
 exec /usr/local/bin/DiagnoseLinux
 EOF
-sudo chmod +x "${ROOTFS_DIR}/home/diagnose/.xinitrc"
+chmod +x "${PROFILE_DIR}/airootfs/root/.xinitrc"
 
-# Configure systemd tty1 autologin
-sudo mkdir -p "${ROOTFS_DIR}/etc/systemd/system/getty@tty1.service.d"
-cat << 'EOF' | sudo tee "${ROOTFS_DIR}/etc/systemd/system/getty@tty1.service.d/override.conf"
-[Service]
-ExecStart=
-ExecStart=-/sbin/agetty --autologin diagnose --noclear %I $TERM
-EOF
-
-# Configure bashrc to launch startx on tty1 login
-cat << 'EOF' | sudo tee -a "${ROOTFS_DIR}/home/diagnose/.bashrc"
-if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
-    exec startx -- :0
+# Override automated_script.sh to start Xorg automatically on tty1 login
+cat << 'EOF' > "${PROFILE_DIR}/airootfs/root/.automated_script.sh"
+#!/bin/bash
+# If we are on tty1, launch Xorg server running our kiosk environment
+if [[ $(tty) == "/dev/tty1" ]]; then
+    exec startx -- :0 -nolisten tcp vt1
 fi
 EOF
+chmod +x "${PROFILE_DIR}/airootfs/root/.automated_script.sh"
 
-sudo chroot "${ROOTFS_DIR}" chown -R diagnose:diagnose /home/diagnose
+# 7. Build the Live ISO using mkarchiso
+echo "[+] Starte mkarchiso (dies kann einige Minuten dauern)..."
+sudo mkarchiso -v -w "${WORK_DIR}" -o "${OUT_DIR}" "${PROFILE_DIR}"
 
-# Unmount chroot mounts
-sudo umount "${ROOTFS_DIR}/dev"
-sudo umount "${ROOTFS_DIR}/proc"
-sudo umount "${ROOTFS_DIR}/sys"
-
-# 5. Build Live Squashfs Filesystem
-echo "[+] Creating compressed SquashFS live image..."
-sudo mkdir -p "${ISO_DIR}/live"
-sudo mksquashfs "${ROOTFS_DIR}" "${ISO_DIR}/live/filesystem.squashfs" -comp xz
-
-# Copy Kernel and Initrd
-KERNEL_FILE=$(sudo find "${ROOTFS_DIR}" -name "vmlinuz*" | head -n 1)
-INITRD_FILE=$(sudo find "${ROOTFS_DIR}" -name "initrd*" | head -n 1)
-
-echo "[+] Copying Kernel: ${KERNEL_FILE}"
-echo "[+] Copying Initrd: ${INITRD_FILE}"
-
-sudo cp "${KERNEL_FILE}" "${ISO_DIR}/live/vmlinuz"
-sudo cp "${INITRD_FILE}" "${ISO_DIR}/live/initrd.img"
-
-# 6. Configure GRUB Bootloader for UEFI & BIOS Boot
-echo "[+] Configuring GRUB Bootloader..."
-sudo mkdir -p "${ISO_DIR}/boot/grub"
-cat << 'EOF' | sudo tee "${ISO_DIR}/boot/grub/grub.cfg"
-set default=0
-set timeout=5
-
-menuentry "DiagnoseLinux Hardware Diagnostic Live OS (UEFI/BIOS)" {
-    linux /live/vmlinuz boot=live quiet splash
-    initrd /live/initrd.img
-}
-
-menuentry "DiagnoseLinux Safe Graphics Mode" {
-    linux /live/vmlinuz boot=live nomodeset quiet
-    initrd /live/initrd.img
-}
-EOF
-
-# 7. Generate Hybrid Bootable ISO Image
-echo "[+] Packaging bootable ISO: ${PROJECT_DIR}/${ISO_NAME}..."
-sudo rm -f "${PROJECT_DIR}/${ISO_NAME}"
-sudo grub-mkrescue -o "${PROJECT_DIR}/${ISO_NAME}" "${ISO_DIR}"
+# 8. Move the completed ISO back to the project folder
+echo "[+] Bereite Ausgabe vor..."
+rm -f "${PROJECT_DIR}/${ISO_NAME}"
+cp "${OUT_DIR}"/*.iso "${PROJECT_DIR}/${ISO_NAME}"
 sudo chmod 666 "${PROJECT_DIR}/${ISO_NAME}" 2>/dev/null || true
 
-# Clean up temp build directory
+# Grant Hyper-V permissions to the generated ISO if running in WSL
+if command -v icacls.exe &> /dev/null; then
+    echo "[+] Gewähre Hyper-V Berechtigungen für das ISO..."
+    icacls.exe "$(wslpath -w "${PROJECT_DIR}/${ISO_NAME}")" /grant 'Jeder:(R)' 2>/dev/null || true
+    icacls.exe "$(wslpath -w "${PROJECT_DIR}/${ISO_NAME}")" /grant 'Everyone:(R)' 2>/dev/null || true
+fi
+
+# Clean up build directory to free space
 sudo rm -rf "${BUILD_DIR}"
 
 echo "=========================================================="
-echo " [SUCCESS] Linux Live ISO generated: ${PROJECT_DIR}/${ISO_NAME}"
-echo " Ready for USB flashing via Ventoy, Rufus, or dd!"
+echo " [SUCCESS] Arch Live ISO erfolgreich generiert:"
+echo " ${PROJECT_DIR}/${ISO_NAME}"
+echo " Bereit zum Flashen via Ventoy, Rufus oder dd!"
 echo "=========================================================="

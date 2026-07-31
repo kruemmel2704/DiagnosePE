@@ -29,7 +29,7 @@ private:
     bool showGuide = false;
     bool showStartMenu = false;
     bool showPdfSaveModal = false;
-    char pdfSavePath[260] = "C:\\Pruefbericht.pdf";
+    char pdfSavePath[260] = "/tmp/Pruefbericht.pdf";
     std::string pathSelectToolKey = "";
     char toolManualPath[260] = "";
 

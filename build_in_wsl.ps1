@@ -15,14 +15,7 @@ Write-Host "[+] Projektpfad in WSL: $wslPath" -ForegroundColor Yellow
 if (Get-Command "wsl" -ErrorAction SilentlyContinue) {
     Write-Host "[+] Starte 100% Linux Live-Build..." -ForegroundColor Green
     
-    # Execute build script in WSL (explicitly targeting Debian if it is installed, as docker-desktop lacks bash/tools)
-    $wslArgs = "bash -c ""cd '$wslPath' && chmod +x build_linux_live.sh && sudo ./build_linux_live.sh"""
-    $distros = & wsl.exe -l -q 2>$null
-    if ($distros -match "Debian") {
-        $wslArgs = "-d Debian " + $wslArgs
-    } elseif ($distros -match "Ubuntu") {
-        $wslArgs = "-d Ubuntu " + $wslArgs
-    }
+    $wslArgs = "-d archlinux -u root bash -c ""cd '$wslPath' && chmod +x build_linux_live.sh && ./build_linux_live.sh"""
     
     $process = Start-Process -FilePath "wsl.exe" -ArgumentList $wslArgs -NoNewWindow -PassThru -Wait
 
