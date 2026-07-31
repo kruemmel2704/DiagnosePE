@@ -20,6 +20,12 @@ static std::wstring StringToWString(const std::string& str) {
     return wstr;
 }
 
+static std::wstring ToLower(std::wstring str) {
+    std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+    return str;
+}
+
+
 static std::string ReadFileFirstLine(const std::string& path) {
     std::ifstream file(path);
     if (!file.is_open()) return "";
@@ -235,6 +241,31 @@ float HardwareMonitor::CalculateCpuLoad() {
     return (cpuPercentage >= 0.0f && cpuPercentage <= 100.0f) ? cpuPercentage : 0.0f;
 }
 
+static std::string FindRc6ResidencyPath(const std::string& cardPath) {
+    // Check common locations
+    std::string path1 = cardPath + "/device/power/rc6_residency_ms";
+    if (fs::exists(path1)) return path1;
+    
+    std::string path2 = cardPath + "/gt/gt0/rc6_residency_ms";
+    if (fs::exists(path2)) return path2;
+    
+    std::string path3 = cardPath + "/device/drm/card0/gt/gt0/rc6_residency_ms";
+    if (fs::exists(path3)) return path3;
+
+    // Recursive directory search for rc6_residency_ms up to 3 levels deep
+    try {
+        if (fs::exists(cardPath)) {
+            for (const auto& entry : fs::recursive_directory_iterator(cardPath, fs::directory_options::skip_permission_denied)) {
+                if (entry.path().filename().string() == "rc6_residency_ms") {
+                    return entry.path().string();
+                }
+            }
+        }
+    } catch (...) {}
+    
+    return "";
+}
+
 HardwareDiagnostics HardwareMonitor::GetDiagnostics() {
     HardwareDiagnostics diag = cachedStaticInfo;
 
@@ -311,11 +342,163 @@ HardwareDiagnostics HardwareMonitor::GetDiagnostics() {
         }
     }
 
-    // GPU
+    // GPU Metrics Collection
     try {
-        if (fs::exists("/sys/class/drm/card0/device/gpu_busy_percent")) {
-            std::string busyStr = ReadFileFirstLine("/sys/class/drm/card0/device/gpu_busy_percent");
-            if (!busyStr.empty()) diag.gpuLoad = std::stof(busyStr);
+        std::wstring gpuNameLower = ToLower(diag.gpuName);
+        bool hasNvidia = (gpuNameLower.find(L"nvidia") != std::wstring::npos || gpuNameLower.find(L"geforce") != std::wstring::npos);
+        bool nvidiaSmiSuccess = false;
+
+        if (hasNvidia) {
+            std::string cmd = "nvidia-smi";
+            if (GetCommandOutput("which nvidia-smi 2>/dev/null").empty()) {
+                if (fs::exists("/usr/lib/wsl/lib/nvidia-smi")) {
+                    cmd = "/usr/lib/wsl/lib/nvidia-smi";
+                }
+            }
+            std::string nvOut = GetCommandOutput(cmd + " --query-gpu=temperature.gpu,utilization.gpu --format=csv,noheader,nounits 2>/dev/null");
+            if (!nvOut.empty()) {
+                std::stringstream ss(nvOut);
+                std::string line;
+                float maxTemp = 0.0f;
+                float maxLoad = 0.0f;
+                bool parsedAny = false;
+                while (std::getline(ss, line)) {
+                    size_t comma = line.find(',');
+                    if (comma != std::string::npos) {
+                        std::string tempStr = line.substr(0, comma);
+                        std::string loadStr = line.substr(comma + 1);
+
+                        // Trim whitespace
+                        tempStr.erase(0, tempStr.find_first_not_of(" \t"));
+                        tempStr.erase(tempStr.find_last_not_of(" \t\r\n") + 1);
+                        loadStr.erase(0, loadStr.find_first_not_of(" \t"));
+                        loadStr.erase(loadStr.find_last_not_of(" \t\r\n") + 1);
+
+                        try {
+                            float tempVal = std::stof(tempStr);
+                            float loadVal = std::stof(loadStr);
+                            if (tempVal > maxTemp) maxTemp = tempVal;
+                            if (loadVal > maxLoad) maxLoad = loadVal;
+                            parsedAny = true;
+                        } catch (...) {}
+                    }
+                }
+                if (parsedAny) {
+                    diag.gpuTemp = maxTemp;
+                    diag.gpuLoad = maxLoad;
+                    nvidiaSmiSuccess = true;
+                }
+            }
+        }
+
+        // If not NVIDIA or nvidia-smi was unsuccessful, fall back to sysfs/hwmon
+        if (!nvidiaSmiSuccess) {
+            float maxGpuLoad = 0.0f;
+            float maxGpuTemp = 0.0f;
+            bool foundTemp = false;
+            bool foundLoad = false;
+
+            if (fs::exists("/sys/class/drm")) {
+                for (const auto& cardEntry : fs::directory_iterator("/sys/class/drm")) {
+                    std::string cardName = cardEntry.path().filename().string();
+                    // Match card0, card1, etc.
+                    if (cardName.rfind("card", 0) == 0 && cardName.find('-') == std::string::npos) {
+                        // 1. Try AMD load: read device/gpu_busy_percent
+                        std::string busyPath = cardEntry.path().string() + "/device/gpu_busy_percent";
+                        if (fs::exists(busyPath)) {
+                            std::string busyStr = ReadFileFirstLine(busyPath);
+                            if (!busyStr.empty()) {
+                                try {
+                                    float load = std::stof(busyStr);
+                                    if (load > maxGpuLoad) maxGpuLoad = load;
+                                    foundLoad = true;
+                                } catch (...) {}
+                            }
+                        }
+
+                        // 2. Try Intel load: read rc6_residency_ms and calculate load
+                        if (!foundLoad) {
+                            std::string rc6Path = FindRc6ResidencyPath(cardEntry.path().string());
+                            if (!rc6Path.empty()) {
+                                std::string rc6Str = ReadFileFirstLine(rc6Path);
+                                if (!rc6Str.empty()) {
+                                    try {
+                                        uint64_t rc6Val = std::stoull(rc6Str);
+                                        auto now = std::chrono::steady_clock::now();
+                                        if (prevRc6 > 0) {
+                                            auto elapsedMs = std::chrono::duration_cast<std::chrono::milliseconds>(now - prevRc6Time).count();
+                                            if (elapsedMs > 0) {
+                                                uint64_t rc6Diff = (rc6Val >= prevRc6) ? (rc6Val - prevRc6) : 0;
+                                                float idleRatio = (float)rc6Diff / (float)elapsedMs;
+                                                float load = (1.0f - idleRatio) * 100.0f;
+                                                if (load < 0.0f) load = 0.0f;
+                                                if (load > 100.0f) load = 100.0f;
+                                                if (load > maxGpuLoad) maxGpuLoad = load;
+                                                foundLoad = true;
+                                            }
+                                        }
+                                        prevRc6 = rc6Val;
+                                        prevRc6Time = now;
+                                    } catch (...) {}
+                                }
+                            }
+                        }
+
+                        // Temp: read device/hwmon/hwmon*/temp*_input
+                        std::string hwmonDir = cardEntry.path().string() + "/device/hwmon";
+                        if (fs::exists(hwmonDir)) {
+                            for (const auto& hwmonEntry : fs::directory_iterator(hwmonDir)) {
+                                if (fs::exists(hwmonEntry.path())) {
+                                    for (const auto& sensorFile : fs::directory_iterator(hwmonEntry.path())) {
+                                        std::string fileName = sensorFile.path().filename().string();
+                                        if (fileName.rfind("temp", 0) == 0 && fileName.find("_input") != std::string::npos) {
+                                            std::string valStr = ReadFileFirstLine(sensorFile.path().string());
+                                            if (!valStr.empty()) {
+                                                try {
+                                                    float tempC = std::stof(valStr) / 1000.0f;
+                                                    if (tempC > 0.0f && tempC < 150.0f) {
+                                                        if (tempC > maxGpuTemp) maxGpuTemp = tempC;
+                                                        foundTemp = true;
+                                                        break;
+                                                    }
+                                                } catch (...) {}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Direct hwmon fallback (scanning all hwmon directories for GPU matching names)
+            if (!foundTemp && fs::exists("/sys/class/hwmon")) {
+                for (const auto& hwmonEntry : fs::directory_iterator("/sys/class/hwmon")) {
+                    std::string hwmonName = ReadFileFirstLine(hwmonEntry.path().string() + "/name");
+                    if (hwmonName == "amdgpu" || hwmonName == "nouveau" || hwmonName == "radeon" || hwmonName == "i915" || hwmonName == "xe") {
+                        for (const auto& sensorFile : fs::directory_iterator(hwmonEntry.path())) {
+                            std::string fileName = sensorFile.path().filename().string();
+                            if (fileName.rfind("temp", 0) == 0 && fileName.find("_input") != std::string::npos) {
+                                std::string valStr = ReadFileFirstLine(sensorFile.path().string());
+                                if (!valStr.empty()) {
+                                    try {
+                                        float tempC = std::stof(valStr) / 1000.0f;
+                                        if (tempC > 0.0f && tempC < 150.0f) {
+                                            if (tempC > maxGpuTemp) maxGpuTemp = tempC;
+                                            foundTemp = true;
+                                            break;
+                                        }
+                                    } catch (...) {}
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (foundLoad) diag.gpuLoad = maxGpuLoad;
+            if (foundTemp) diag.gpuTemp = maxGpuTemp;
         }
     } catch (...) {}
 

@@ -62,6 +62,14 @@ void ToolLauncher::InitializeTools() {
     glmark.alternateExeName = L"nvtop";
     glmark.description = L"3D-OpenGL Grafikleistungstest und GPU-Stresstest zur Überprüfung der Grafikstabilität.";
     tools.push_back(glmark);
+
+    TestTool gpustress;
+    gpustress.key = L"gpu-stress";
+    gpustress.name = L"Intensiver GPU Stresstest (stress-ng)";
+    gpustress.exeName = L"stress-ng";
+    gpustress.alternateExeName = L"glmark2";
+    gpustress.description = L"Maximaler Belastungstest für den Grafikprozessor (GPU) mittels stress-ng OpenGL Shader-Stressor.";
+    tools.push_back(gpustress);
 }
 
 std::wstring ToolLauncher::GetConfigFilePath() {
@@ -108,8 +116,23 @@ bool ToolLauncher::LaunchTool(const std::wstring& key, std::wstring& errorMessag
                 errorMessage = L"Das Tool ist auf dem Linux Live System nicht installiert.";
                 return false;
             }
-            std::string cmd(tool.path.begin(), tool.path.end());
-            cmd += " &";
+            std::string cmd;
+            std::string path(tool.path.begin(), tool.path.end());
+            if (key == L"gpu-stress") {
+                cmd = "stress-ng --gpu 2 --gpu-frag 100 &";
+            } else if (key == L"stress-ng") {
+                cmd = "stress-ng --cpu 0 --io 2 --vm 2 --vm-bytes 512M &";
+            } else if (key == L"memtester") {
+                cmd = "xterm -title 'Memtester Speicherdiagnose' -bg '#1a1d24' -fg '#c5cdd8' -fa 'Monospace' -fs 11 -e 'sudo memtester 256M 1; echo && read -p \"Drücke Enter zum Schließen...\"' &";
+            } else {
+                if (path.find("nvtop") != std::string::npos) {
+                    cmd = "xterm -title 'NVTop GPU Monitor' -bg '#1a1d24' -fg '#c5cdd8' -fa 'Monospace' -fs 11 -e '" + path + "' &";
+                } else if (path.find("smartctl") != std::string::npos && path.find("gsmartcontrol") == std::string::npos) {
+                    cmd = "xterm -title 'Smartctl Drive Info' -bg '#1a1d24' -fg '#c5cdd8' -fa 'Monospace' -fs 11 -e 'sudo " + path + " -a /dev/sda || sudo " + path + " -a /dev/nvme0n1; echo && read -p \"Drücke Enter zum Schließen...\"' &";
+                } else {
+                    cmd = path + " &";
+                }
+            }
             int res = system(cmd.c_str());
             if (res == 0) return true;
             errorMessage = L"Fehler beim Starten des Linux-Tools.";
@@ -117,6 +140,45 @@ bool ToolLauncher::LaunchTool(const std::wstring& key, std::wstring& errorMessag
         }
     }
     errorMessage = L"Unbekanntes Tool.";
+    return false;
+}
+
+bool ToolLauncher::IsToolRunning(const std::wstring& key) {
+    for (const auto& tool : tools) {
+        if (tool.key == key) {
+            std::string exe(tool.exeName.begin(), tool.exeName.end());
+            std::string alt(tool.alternateExeName.begin(), tool.alternateExeName.end());
+            std::string cmd;
+            if (key == L"gpu-stress") {
+                cmd = "pgrep -f \"[s]tress-ng --gpu\" >/dev/null 2>&1";
+            } else if (key == L"stress-ng") {
+                cmd = "pgrep -f \"[s]tress-ng\" | grep -v \"--gpu\" >/dev/null 2>&1";
+            } else {
+                cmd = "pgrep -x \"" + exe + "\" >/dev/null 2>&1 || pgrep -x \"" + alt + "\" >/dev/null 2>&1";
+            }
+            return system(cmd.c_str()) == 0;
+        }
+    }
+    return false;
+}
+
+bool ToolLauncher::StopTool(const std::wstring& key) {
+    for (const auto& tool : tools) {
+        if (tool.key == key) {
+            std::string exe(tool.exeName.begin(), tool.exeName.end());
+            std::string alt(tool.alternateExeName.begin(), tool.alternateExeName.end());
+            std::string cmd;
+            if (key == L"gpu-stress") {
+                cmd = "pkill -9 -f \"stress-ng --gpu\" >/dev/null 2>&1";
+            } else if (key == L"stress-ng") {
+                cmd = "for pid in $(pgrep -f \"[s]tress-ng\" | grep -v \"--gpu\"); do kill -9 $pid; done >/dev/null 2>&1";
+            } else {
+                cmd = "pkill -x \"" + exe + "\" >/dev/null 2>&1 || pkill -x \"" + alt + "\" >/dev/null 2>&1";
+            }
+            system(cmd.c_str());
+            return true;
+        }
+    }
     return false;
 }
 

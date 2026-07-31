@@ -329,6 +329,7 @@ CMakeFiles/DiagnoseLinux.dir/main.cpp.o: \
  /usr/include/bits/getopt_core.h /usr/include/bits/unistd_ext.h \
  /usr/include/linux/close_range.h \
  /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/hardware_monitor.h \
+ /usr/include/c++/16/chrono \
  /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/battery_service.h \
  /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/stress_test.h \
  /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/ram_test.h \
@@ -341,5 +342,4 @@ CMakeFiles/DiagnoseLinux.dir/main.cpp.o: \
  /usr/include/c++/16/bits/stl_map.h \
  /usr/include/c++/16/bits/stl_multimap.h \
  /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/pdf_writer.h \
- /usr/include/c++/16/sstream /usr/include/c++/16/bits/sstream.tcc \
- /usr/include/c++/16/chrono
+ /usr/include/c++/16/sstream /usr/include/c++/16/bits/sstream.tcc

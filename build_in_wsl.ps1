@@ -29,6 +29,8 @@ if (Get-Command "wsl" -ErrorAction SilentlyContinue) {
         # Grant Hyper-V / Windows service permissions to access ISO
         icacls DiagnoseLinux.iso /grant "Everyone:(R)" | Out-Null
         icacls DiagnoseLinux.iso /grant "Jeder:(R)" | Out-Null
+        icacls DiagnoseLinux.iso /grant "*S-1-5-83-0:(R)" | Out-Null
+        icacls DiagnoseLinux.iso /grant "NT VIRTUAL MACHINE\Virtual Machines:(R)" | Out-Null
         
         Write-Host ""
         Write-Host "==========================================================" -ForegroundColor Green

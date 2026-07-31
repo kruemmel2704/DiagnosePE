@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <cstdint>
+#include <chrono>
 
 struct CpuCoreInfo {
     std::wstring name;
@@ -41,6 +42,9 @@ private:
     uint64_t prevIdleTime = 0;
     uint64_t prevKernelTime = 0;
     uint64_t prevUserTime = 0;
+    
+    uint64_t prevRc6 = 0;
+    std::chrono::steady_clock::time_point prevRc6Time;
     
     HardwareDiagnostics cachedStaticInfo;
     bool hasStaticInfo = false;

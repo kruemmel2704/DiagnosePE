@@ -1228,12 +1228,23 @@ void GuiController::DrawTools(void* hwnd) {
         ImGui::NextColumn();
         ImGui::SetCursorPosY(10.0f);
         if (tool.IsFound()) {
-            if (ImGui::Button("Tool starten", ImVec2(ImGui::GetContentRegionAvail().x, 26))) {
-                std::wstring err;
-                if (launcher.LaunchTool(tool.key, err)) {
-                    SetStatus(L"Tool gestartet: " + tool.key, false);
-                } else {
-                    SetStatus(err, true);
+            bool isRunning = launcher.IsToolRunning(tool.key);
+            if (isRunning) {
+                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.85f, 0.15f, 0.15f, 1.00f));
+                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.95f, 0.25f, 0.25f, 1.00f));
+                if (ImGui::Button("Tool beenden", ImVec2(ImGui::GetContentRegionAvail().x, 26))) {
+                    launcher.StopTool(tool.key);
+                    SetStatus(L"Tool beendet: " + tool.key, false);
+                }
+                ImGui::PopStyleColor(2);
+            } else {
+                if (ImGui::Button("Tool starten", ImVec2(ImGui::GetContentRegionAvail().x, 26))) {
+                    std::wstring err;
+                    if (launcher.LaunchTool(tool.key, err)) {
+                        SetStatus(L"Tool gestartet: " + tool.key, false);
+                    } else {
+                        SetStatus(err, true);
+                    }
                 }
             }
         } else {

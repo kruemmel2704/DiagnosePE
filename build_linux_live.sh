@@ -126,6 +126,8 @@ if command -v icacls.exe &> /dev/null; then
     echo "[+] Gewähre Hyper-V Berechtigungen für das ISO..."
     icacls.exe "$(wslpath -w "${PROJECT_DIR}/${ISO_NAME}")" /grant 'Jeder:(R)' 2>/dev/null || true
     icacls.exe "$(wslpath -w "${PROJECT_DIR}/${ISO_NAME}")" /grant 'Everyone:(R)' 2>/dev/null || true
+    icacls.exe "$(wslpath -w "${PROJECT_DIR}/${ISO_NAME}")" /grant '*S-1-5-83-0:(R)' 2>/dev/null || true
+    icacls.exe "$(wslpath -w "${PROJECT_DIR}/${ISO_NAME}")" /grant 'NT VIRTUAL MACHINE\Virtual Machines:(R)' 2>/dev/null || true
 fi
 
 # Clean up build directory to free space

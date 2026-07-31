@@ -35,6 +35,8 @@ public:
     void ClearManualPath(const std::wstring& key);
     bool HasManualPath(const std::wstring& key) const;
     bool LaunchTool(const std::wstring& key, std::wstring& errorMessage);
+    bool IsToolRunning(const std::wstring& key);
+    bool StopTool(const std::wstring& key);
 
     std::vector<TestTool>& GetTools();
 };
