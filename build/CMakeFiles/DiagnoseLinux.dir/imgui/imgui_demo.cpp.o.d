@@ -1,8 +1,7 @@
 CMakeFiles/DiagnoseLinux.dir/imgui/imgui_demo.cpp.o: \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imgui_demo.cpp \
- /usr/include/stdc-predef.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imgui.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imconfig.h \
+ /mnt/d/Tools/DiagnosePE/imgui/imgui_demo.cpp /usr/include/stdc-predef.h \
+ /mnt/d/Tools/DiagnosePE/imgui/imgui.h \
+ /mnt/d/Tools/DiagnosePE/imgui/imconfig.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/16/include/float.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/16/include/stdarg.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/16/include/stddef.h \

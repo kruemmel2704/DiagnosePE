@@ -664,7 +664,7 @@ void GuiController::DrawDesktop(void* hwnd, float screenWidth, float screenHeigh
     bool launchGpuStress = false; bool dummyGpuStressMin = false;
     DrawDesktopIcon("GPU Stresstest", "GPU", startX + 110.0f, startY + stepY*5, launchGpuStress, dummyGpuStressMin);
     if (launchGpuStress) {
-        system("glmark2 --fullscreen &");
+        system("furmark2 &");
     }
 }
 

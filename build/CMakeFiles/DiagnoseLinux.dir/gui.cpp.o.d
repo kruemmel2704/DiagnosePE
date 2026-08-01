@@ -1,9 +1,6 @@
-CMakeFiles/DiagnoseLinux.dir/gui.cpp.o: \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/gui.cpp \
- /usr/include/stdc-predef.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/gui.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/platform_compat.h \
- /usr/include/c++/16/cstdint \
+CMakeFiles/DiagnoseLinux.dir/gui.cpp.o: /mnt/d/Tools/DiagnosePE/gui.cpp \
+ /usr/include/stdc-predef.h /mnt/d/Tools/DiagnosePE/gui.h \
+ /mnt/d/Tools/DiagnosePE/platform_compat.h /usr/include/c++/16/cstdint \
  /usr/include/c++/16/x86_64-pc-linux-gnu/bits/c++config.h \
  /usr/include/c++/16/x86_64-pc-linux-gnu/bits/os_defines.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -95,8 +92,8 @@ CMakeFiles/DiagnoseLinux.dir/gui.cpp.o: \
  /usr/include/bits/confname.h /usr/include/bits/getopt_posix.h \
  /usr/include/bits/getopt_core.h /usr/include/bits/unistd_ext.h \
  /usr/include/linux/close_range.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/hardware_monitor.h \
- /usr/include/c++/16/string /usr/include/c++/16/bits/stringfwd.h \
+ /mnt/d/Tools/DiagnosePE/hardware_monitor.h /usr/include/c++/16/string \
+ /usr/include/c++/16/bits/stringfwd.h \
  /usr/include/c++/16/bits/memoryfwd.h \
  /usr/include/c++/16/bits/char_traits.h \
  /usr/include/c++/16/bits/postypes.h /usr/include/c++/16/bits/allocator.h \
@@ -138,10 +135,10 @@ CMakeFiles/DiagnoseLinux.dir/gui.cpp.o: \
  /usr/include/c++/16/bits/vector.tcc /usr/include/c++/16/chrono \
  /usr/include/c++/16/bits/chrono.h /usr/include/c++/16/ratio \
  /usr/include/c++/16/bits/parse_numbers.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/battery_service.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/stress_test.h \
- /usr/include/c++/16/thread /usr/include/c++/16/bits/std_thread.h \
- /usr/include/c++/16/bits/refwrap.h /usr/include/c++/16/bits/unique_ptr.h \
+ /mnt/d/Tools/DiagnosePE/battery_service.h \
+ /mnt/d/Tools/DiagnosePE/stress_test.h /usr/include/c++/16/thread \
+ /usr/include/c++/16/bits/std_thread.h /usr/include/c++/16/bits/refwrap.h \
+ /usr/include/c++/16/bits/unique_ptr.h \
  /usr/include/c++/16/x86_64-pc-linux-gnu/bits/gthr.h \
  /usr/include/c++/16/x86_64-pc-linux-gnu/bits/gthr-default.h \
  /usr/include/pthread.h /usr/include/sched.h /usr/include/bits/sched.h \
@@ -158,24 +155,23 @@ CMakeFiles/DiagnoseLinux.dir/gui.cpp.o: \
  /usr/include/c++/16/bits/this_thread_sleep.h /usr/include/c++/16/atomic \
  /usr/include/c++/16/bits/atomic_base.h \
  /usr/include/c++/16/bits/atomic_lockfree_defines.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/ram_test.h \
- /usr/include/c++/16/mutex /usr/include/c++/16/bits/functexcept.h \
+ /mnt/d/Tools/DiagnosePE/ram_test.h /usr/include/c++/16/mutex \
+ /usr/include/c++/16/bits/functexcept.h \
  /usr/include/c++/16/bits/std_mutex.h \
  /usr/include/c++/16/bits/unique_lock.h \
  /usr/include/c++/16/x86_64-pc-linux-gnu/bits/error_constants.h \
  /usr/include/c++/16/ext/atomicity.h \
  /usr/include/c++/16/x86_64-pc-linux-gnu/bits/atomic_word.h \
  /usr/include/sys/single_threaded.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/tool_launcher.h \
- /usr/include/c++/16/map /usr/include/c++/16/bits/stl_tree.h \
+ /mnt/d/Tools/DiagnosePE/tool_launcher.h /usr/include/c++/16/map \
+ /usr/include/c++/16/bits/stl_tree.h \
  /usr/include/c++/16/ext/aligned_buffer.h \
  /usr/include/c++/16/bits/node_handle.h \
  /usr/include/c++/16/bits/stl_map.h \
  /usr/include/c++/16/bits/stl_multimap.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/pdf_writer.h \
- /usr/include/c++/16/sstream /usr/include/c++/16/istream \
- /usr/include/c++/16/ios /usr/include/c++/16/exception \
- /usr/include/c++/16/bits/exception_ptr.h \
+ /mnt/d/Tools/DiagnosePE/pdf_writer.h /usr/include/c++/16/sstream \
+ /usr/include/c++/16/istream /usr/include/c++/16/ios \
+ /usr/include/c++/16/exception /usr/include/c++/16/bits/exception_ptr.h \
  /usr/include/c++/16/bits/cxxabi_init_exception.h \
  /usr/include/c++/16/typeinfo /usr/include/c++/16/bits/nested_exception.h \
  /usr/include/c++/16/bits/ios_base.h \
@@ -197,9 +193,9 @@ CMakeFiles/DiagnoseLinux.dir/gui.cpp.o: \
  /usr/include/c++/16/bits/ostream.tcc \
  /usr/include/c++/16/bits/istream.tcc \
  /usr/include/c++/16/bits/sstream.tcc \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/system_repair.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imgui.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imconfig.h \
+ /mnt/d/Tools/DiagnosePE/system_repair.h \
+ /mnt/d/Tools/DiagnosePE/imgui/imgui.h \
+ /mnt/d/Tools/DiagnosePE/imgui/imconfig.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/16/include/float.h \
  /usr/include/assert.h /usr/include/c++/16/iomanip \
  /usr/include/c++/16/locale \

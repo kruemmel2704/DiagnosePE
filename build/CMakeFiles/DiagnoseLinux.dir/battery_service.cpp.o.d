@@ -1,8 +1,7 @@
 CMakeFiles/DiagnoseLinux.dir/battery_service.cpp.o: \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/battery_service.cpp \
- /usr/include/stdc-predef.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/battery_service.h \
- /usr/include/c++/16/string /usr/include/c++/16/bits/requires_hosted.h \
+ /mnt/d/Tools/DiagnosePE/battery_service.cpp /usr/include/stdc-predef.h \
+ /mnt/d/Tools/DiagnosePE/battery_service.h /usr/include/c++/16/string \
+ /usr/include/c++/16/bits/requires_hosted.h \
  /usr/include/c++/16/x86_64-pc-linux-gnu/bits/c++config.h \
  /usr/include/c++/16/x86_64-pc-linux-gnu/bits/os_defines.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -96,8 +95,7 @@ CMakeFiles/DiagnoseLinux.dir/battery_service.cpp.o: \
  /usr/include/c++/16/bits/uses_allocator.h \
  /usr/include/c++/16/bits/uses_allocator_args.h /usr/include/c++/16/tuple \
  /usr/include/c++/16/bits/invoke.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/platform_compat.h \
- /usr/include/c++/16/cstdint \
+ /mnt/d/Tools/DiagnosePE/platform_compat.h /usr/include/c++/16/cstdint \
  /usr/lib/gcc/x86_64-pc-linux-gnu/16/include/stdint.h \
  /usr/include/stdint.h /usr/include/bits/stdint-uintn.h \
  /usr/include/bits/stdint-least.h /usr/include/c++/16/cstring \

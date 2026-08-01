@@ -55,21 +55,21 @@ void ToolLauncher::InitializeTools() {
     memtest.description = L"Speicherdiagnoseprogramm zur Verifizierung von RAM-Zellen und Erkennung von Bit-Flips im Adressraum.";
     tools.push_back(memtest);
 
-    TestTool glmark;
-    glmark.key = L"glmark2";
-    glmark.name = L"GLMark2 / NVTop GPU Utility";
-    glmark.exeName = L"glmark2";
-    glmark.alternateExeName = L"nvtop";
-    glmark.description = L"3D-OpenGL Grafikleistungstest und GPU-Stresstest zur Überprüfung der Grafikstabilität.";
-    tools.push_back(glmark);
-
     TestTool gpustress;
     gpustress.key = L"gpu-stress";
     gpustress.name = L"Intensiver GPU Stresstest (stress-ng)";
     gpustress.exeName = L"stress-ng";
-    gpustress.alternateExeName = L"glmark2";
+    gpustress.alternateExeName = L"furmark2";
     gpustress.description = L"Maximaler Belastungstest für den Grafikprozessor (GPU) mittels stress-ng OpenGL Shader-Stressor.";
     tools.push_back(gpustress);
+
+    TestTool furmark;
+    furmark.key = L"FurMark";
+    furmark.name = L"GPU Stresstest (FurMark 2)";
+    furmark.exeName = L"furmark2";
+    furmark.alternateExeName = L"furmark";
+    furmark.description = L"Grafik-Stresstest zur Auslastung der GPU und Überprüfung der thermischen Stabilität.";
+    tools.push_back(furmark);
 }
 
 std::wstring ToolLauncher::GetConfigFilePath() {

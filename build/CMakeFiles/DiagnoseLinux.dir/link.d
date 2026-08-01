@@ -21,6 +21,7 @@ DiagnoseLinux: \
   /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/libSDL2.so \
   /usr/lib/libOpenGL.so \
   /usr/lib/libGLX.so \
+  /usr/lib/libGLU.so \
   /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/libdl.a \
   /usr/lib/gcc/x86_64-pc-linux-gnu/16/libstdc++.so \
   /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/libm.so \
@@ -37,7 +38,7 @@ DiagnoseLinux: \
   /usr/lib/gcc/x86_64-pc-linux-gnu/16/libatomic_asneeded.so \
   /usr/lib/gcc/x86_64-pc-linux-gnu/16/libatomic_asneeded.so \
   /usr/lib/gcc/x86_64-pc-linux-gnu/16/libatomic_asneeded.so \
-  /usr/lib/gcc/x86_64-pc-linux-gnu/16/libatomic.a \
+  /usr/lib/gcc/x86_64-pc-linux-gnu/16/libatomic.so \
   /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/libc.so \
   /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/libc.so \
   /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/libc.so \
@@ -103,6 +104,8 @@ CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_opengl3.cpp.o:
 
 /usr/lib/libGLX.so:
 
+/usr/lib/libGLU.so:
+
 /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/libdl.a:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/16/libstdc++.so:
@@ -135,7 +138,7 @@ CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_opengl3.cpp.o:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/16/libatomic_asneeded.so:
 
-/usr/lib/gcc/x86_64-pc-linux-gnu/16/libatomic.a:
+/usr/lib/gcc/x86_64-pc-linux-gnu/16/libatomic.so:
 
 /usr/lib/gcc/x86_64-pc-linux-gnu/16/../../../../lib/libc.so:
 

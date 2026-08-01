@@ -44,19 +44,19 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /usr/sbin/cmake
+CMAKE_COMMAND = /usr/bin/cmake
 
 # The command to remove a file.
-RM = /usr/sbin/cmake -E rm -f
+RM = /usr/bin/cmake -E rm -f
 
 # Escaping for special characters.
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE
+CMAKE_SOURCE_DIR = /mnt/d/Tools/DiagnosePE
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/build
+CMAKE_BINARY_DIR = /mnt/d/Tools/DiagnosePE/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/DiagnoseLinux.dir/depend.make
@@ -73,228 +73,228 @@ CMakeFiles/DiagnoseLinux.dir/codegen:
 .PHONY : CMakeFiles/DiagnoseLinux.dir/codegen
 
 CMakeFiles/DiagnoseLinux.dir/main.cpp.o: CMakeFiles/DiagnoseLinux.dir/flags.make
-CMakeFiles/DiagnoseLinux.dir/main.cpp.o: /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/main.cpp
+CMakeFiles/DiagnoseLinux.dir/main.cpp.o: /mnt/d/Tools/DiagnosePE/main.cpp
 CMakeFiles/DiagnoseLinux.dir/main.cpp.o: CMakeFiles/DiagnoseLinux.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/DiagnoseLinux.dir/main.cpp.o"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/main.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/main.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/main.cpp.o -c /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/d/Tools/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/DiagnoseLinux.dir/main.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/main.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/main.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/main.cpp.o -c /mnt/d/Tools/DiagnosePE/main.cpp
 
 CMakeFiles/DiagnoseLinux.dir/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/DiagnoseLinux.dir/main.cpp.i"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/main.cpp > CMakeFiles/DiagnoseLinux.dir/main.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/d/Tools/DiagnosePE/main.cpp > CMakeFiles/DiagnoseLinux.dir/main.cpp.i
 
 CMakeFiles/DiagnoseLinux.dir/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/DiagnoseLinux.dir/main.cpp.s"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/main.cpp -o CMakeFiles/DiagnoseLinux.dir/main.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/d/Tools/DiagnosePE/main.cpp -o CMakeFiles/DiagnoseLinux.dir/main.cpp.s
 
 CMakeFiles/DiagnoseLinux.dir/gui.cpp.o: CMakeFiles/DiagnoseLinux.dir/flags.make
-CMakeFiles/DiagnoseLinux.dir/gui.cpp.o: /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/gui.cpp
+CMakeFiles/DiagnoseLinux.dir/gui.cpp.o: /mnt/d/Tools/DiagnosePE/gui.cpp
 CMakeFiles/DiagnoseLinux.dir/gui.cpp.o: CMakeFiles/DiagnoseLinux.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/DiagnoseLinux.dir/gui.cpp.o"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/gui.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/gui.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/gui.cpp.o -c /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/gui.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/d/Tools/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/DiagnoseLinux.dir/gui.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/gui.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/gui.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/gui.cpp.o -c /mnt/d/Tools/DiagnosePE/gui.cpp
 
 CMakeFiles/DiagnoseLinux.dir/gui.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/DiagnoseLinux.dir/gui.cpp.i"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/gui.cpp > CMakeFiles/DiagnoseLinux.dir/gui.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/d/Tools/DiagnosePE/gui.cpp > CMakeFiles/DiagnoseLinux.dir/gui.cpp.i
 
 CMakeFiles/DiagnoseLinux.dir/gui.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/DiagnoseLinux.dir/gui.cpp.s"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/gui.cpp -o CMakeFiles/DiagnoseLinux.dir/gui.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/d/Tools/DiagnosePE/gui.cpp -o CMakeFiles/DiagnoseLinux.dir/gui.cpp.s
 
 CMakeFiles/DiagnoseLinux.dir/hardware_monitor.cpp.o: CMakeFiles/DiagnoseLinux.dir/flags.make
-CMakeFiles/DiagnoseLinux.dir/hardware_monitor.cpp.o: /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/hardware_monitor.cpp
+CMakeFiles/DiagnoseLinux.dir/hardware_monitor.cpp.o: /mnt/d/Tools/DiagnosePE/hardware_monitor.cpp
 CMakeFiles/DiagnoseLinux.dir/hardware_monitor.cpp.o: CMakeFiles/DiagnoseLinux.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/DiagnoseLinux.dir/hardware_monitor.cpp.o"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/hardware_monitor.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/hardware_monitor.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/hardware_monitor.cpp.o -c /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/hardware_monitor.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/d/Tools/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/DiagnoseLinux.dir/hardware_monitor.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/hardware_monitor.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/hardware_monitor.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/hardware_monitor.cpp.o -c /mnt/d/Tools/DiagnosePE/hardware_monitor.cpp
 
 CMakeFiles/DiagnoseLinux.dir/hardware_monitor.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/DiagnoseLinux.dir/hardware_monitor.cpp.i"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/hardware_monitor.cpp > CMakeFiles/DiagnoseLinux.dir/hardware_monitor.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/d/Tools/DiagnosePE/hardware_monitor.cpp > CMakeFiles/DiagnoseLinux.dir/hardware_monitor.cpp.i
 
 CMakeFiles/DiagnoseLinux.dir/hardware_monitor.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/DiagnoseLinux.dir/hardware_monitor.cpp.s"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/hardware_monitor.cpp -o CMakeFiles/DiagnoseLinux.dir/hardware_monitor.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/d/Tools/DiagnosePE/hardware_monitor.cpp -o CMakeFiles/DiagnoseLinux.dir/hardware_monitor.cpp.s
 
 CMakeFiles/DiagnoseLinux.dir/battery_service.cpp.o: CMakeFiles/DiagnoseLinux.dir/flags.make
-CMakeFiles/DiagnoseLinux.dir/battery_service.cpp.o: /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/battery_service.cpp
+CMakeFiles/DiagnoseLinux.dir/battery_service.cpp.o: /mnt/d/Tools/DiagnosePE/battery_service.cpp
 CMakeFiles/DiagnoseLinux.dir/battery_service.cpp.o: CMakeFiles/DiagnoseLinux.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/DiagnoseLinux.dir/battery_service.cpp.o"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/battery_service.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/battery_service.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/battery_service.cpp.o -c /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/battery_service.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/d/Tools/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/DiagnoseLinux.dir/battery_service.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/battery_service.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/battery_service.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/battery_service.cpp.o -c /mnt/d/Tools/DiagnosePE/battery_service.cpp
 
 CMakeFiles/DiagnoseLinux.dir/battery_service.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/DiagnoseLinux.dir/battery_service.cpp.i"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/battery_service.cpp > CMakeFiles/DiagnoseLinux.dir/battery_service.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/d/Tools/DiagnosePE/battery_service.cpp > CMakeFiles/DiagnoseLinux.dir/battery_service.cpp.i
 
 CMakeFiles/DiagnoseLinux.dir/battery_service.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/DiagnoseLinux.dir/battery_service.cpp.s"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/battery_service.cpp -o CMakeFiles/DiagnoseLinux.dir/battery_service.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/d/Tools/DiagnosePE/battery_service.cpp -o CMakeFiles/DiagnoseLinux.dir/battery_service.cpp.s
 
 CMakeFiles/DiagnoseLinux.dir/tool_launcher.cpp.o: CMakeFiles/DiagnoseLinux.dir/flags.make
-CMakeFiles/DiagnoseLinux.dir/tool_launcher.cpp.o: /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/tool_launcher.cpp
+CMakeFiles/DiagnoseLinux.dir/tool_launcher.cpp.o: /mnt/d/Tools/DiagnosePE/tool_launcher.cpp
 CMakeFiles/DiagnoseLinux.dir/tool_launcher.cpp.o: CMakeFiles/DiagnoseLinux.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/DiagnoseLinux.dir/tool_launcher.cpp.o"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/tool_launcher.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/tool_launcher.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/tool_launcher.cpp.o -c /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/tool_launcher.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/d/Tools/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/DiagnoseLinux.dir/tool_launcher.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/tool_launcher.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/tool_launcher.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/tool_launcher.cpp.o -c /mnt/d/Tools/DiagnosePE/tool_launcher.cpp
 
 CMakeFiles/DiagnoseLinux.dir/tool_launcher.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/DiagnoseLinux.dir/tool_launcher.cpp.i"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/tool_launcher.cpp > CMakeFiles/DiagnoseLinux.dir/tool_launcher.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/d/Tools/DiagnosePE/tool_launcher.cpp > CMakeFiles/DiagnoseLinux.dir/tool_launcher.cpp.i
 
 CMakeFiles/DiagnoseLinux.dir/tool_launcher.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/DiagnoseLinux.dir/tool_launcher.cpp.s"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/tool_launcher.cpp -o CMakeFiles/DiagnoseLinux.dir/tool_launcher.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/d/Tools/DiagnosePE/tool_launcher.cpp -o CMakeFiles/DiagnoseLinux.dir/tool_launcher.cpp.s
 
 CMakeFiles/DiagnoseLinux.dir/ram_test.cpp.o: CMakeFiles/DiagnoseLinux.dir/flags.make
-CMakeFiles/DiagnoseLinux.dir/ram_test.cpp.o: /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/ram_test.cpp
+CMakeFiles/DiagnoseLinux.dir/ram_test.cpp.o: /mnt/d/Tools/DiagnosePE/ram_test.cpp
 CMakeFiles/DiagnoseLinux.dir/ram_test.cpp.o: CMakeFiles/DiagnoseLinux.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/DiagnoseLinux.dir/ram_test.cpp.o"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/ram_test.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/ram_test.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/ram_test.cpp.o -c /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/ram_test.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/d/Tools/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/DiagnoseLinux.dir/ram_test.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/ram_test.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/ram_test.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/ram_test.cpp.o -c /mnt/d/Tools/DiagnosePE/ram_test.cpp
 
 CMakeFiles/DiagnoseLinux.dir/ram_test.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/DiagnoseLinux.dir/ram_test.cpp.i"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/ram_test.cpp > CMakeFiles/DiagnoseLinux.dir/ram_test.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/d/Tools/DiagnosePE/ram_test.cpp > CMakeFiles/DiagnoseLinux.dir/ram_test.cpp.i
 
 CMakeFiles/DiagnoseLinux.dir/ram_test.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/DiagnoseLinux.dir/ram_test.cpp.s"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/ram_test.cpp -o CMakeFiles/DiagnoseLinux.dir/ram_test.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/d/Tools/DiagnosePE/ram_test.cpp -o CMakeFiles/DiagnoseLinux.dir/ram_test.cpp.s
 
 CMakeFiles/DiagnoseLinux.dir/stress_test.cpp.o: CMakeFiles/DiagnoseLinux.dir/flags.make
-CMakeFiles/DiagnoseLinux.dir/stress_test.cpp.o: /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/stress_test.cpp
+CMakeFiles/DiagnoseLinux.dir/stress_test.cpp.o: /mnt/d/Tools/DiagnosePE/stress_test.cpp
 CMakeFiles/DiagnoseLinux.dir/stress_test.cpp.o: CMakeFiles/DiagnoseLinux.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/DiagnoseLinux.dir/stress_test.cpp.o"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/stress_test.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/stress_test.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/stress_test.cpp.o -c /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/stress_test.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/d/Tools/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/DiagnoseLinux.dir/stress_test.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/stress_test.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/stress_test.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/stress_test.cpp.o -c /mnt/d/Tools/DiagnosePE/stress_test.cpp
 
 CMakeFiles/DiagnoseLinux.dir/stress_test.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/DiagnoseLinux.dir/stress_test.cpp.i"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/stress_test.cpp > CMakeFiles/DiagnoseLinux.dir/stress_test.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/d/Tools/DiagnosePE/stress_test.cpp > CMakeFiles/DiagnoseLinux.dir/stress_test.cpp.i
 
 CMakeFiles/DiagnoseLinux.dir/stress_test.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/DiagnoseLinux.dir/stress_test.cpp.s"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/stress_test.cpp -o CMakeFiles/DiagnoseLinux.dir/stress_test.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/d/Tools/DiagnosePE/stress_test.cpp -o CMakeFiles/DiagnoseLinux.dir/stress_test.cpp.s
 
 CMakeFiles/DiagnoseLinux.dir/pdf_writer.cpp.o: CMakeFiles/DiagnoseLinux.dir/flags.make
-CMakeFiles/DiagnoseLinux.dir/pdf_writer.cpp.o: /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/pdf_writer.cpp
+CMakeFiles/DiagnoseLinux.dir/pdf_writer.cpp.o: /mnt/d/Tools/DiagnosePE/pdf_writer.cpp
 CMakeFiles/DiagnoseLinux.dir/pdf_writer.cpp.o: CMakeFiles/DiagnoseLinux.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/DiagnoseLinux.dir/pdf_writer.cpp.o"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/pdf_writer.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/pdf_writer.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/pdf_writer.cpp.o -c /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/pdf_writer.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/d/Tools/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/DiagnoseLinux.dir/pdf_writer.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/pdf_writer.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/pdf_writer.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/pdf_writer.cpp.o -c /mnt/d/Tools/DiagnosePE/pdf_writer.cpp
 
 CMakeFiles/DiagnoseLinux.dir/pdf_writer.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/DiagnoseLinux.dir/pdf_writer.cpp.i"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/pdf_writer.cpp > CMakeFiles/DiagnoseLinux.dir/pdf_writer.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/d/Tools/DiagnosePE/pdf_writer.cpp > CMakeFiles/DiagnoseLinux.dir/pdf_writer.cpp.i
 
 CMakeFiles/DiagnoseLinux.dir/pdf_writer.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/DiagnoseLinux.dir/pdf_writer.cpp.s"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/pdf_writer.cpp -o CMakeFiles/DiagnoseLinux.dir/pdf_writer.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/d/Tools/DiagnosePE/pdf_writer.cpp -o CMakeFiles/DiagnoseLinux.dir/pdf_writer.cpp.s
 
 CMakeFiles/DiagnoseLinux.dir/system_repair.cpp.o: CMakeFiles/DiagnoseLinux.dir/flags.make
-CMakeFiles/DiagnoseLinux.dir/system_repair.cpp.o: /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/system_repair.cpp
+CMakeFiles/DiagnoseLinux.dir/system_repair.cpp.o: /mnt/d/Tools/DiagnosePE/system_repair.cpp
 CMakeFiles/DiagnoseLinux.dir/system_repair.cpp.o: CMakeFiles/DiagnoseLinux.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/DiagnoseLinux.dir/system_repair.cpp.o"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/system_repair.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/system_repair.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/system_repair.cpp.o -c /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/system_repair.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/d/Tools/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/DiagnoseLinux.dir/system_repair.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/system_repair.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/system_repair.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/system_repair.cpp.o -c /mnt/d/Tools/DiagnosePE/system_repair.cpp
 
 CMakeFiles/DiagnoseLinux.dir/system_repair.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/DiagnoseLinux.dir/system_repair.cpp.i"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/system_repair.cpp > CMakeFiles/DiagnoseLinux.dir/system_repair.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/d/Tools/DiagnosePE/system_repair.cpp > CMakeFiles/DiagnoseLinux.dir/system_repair.cpp.i
 
 CMakeFiles/DiagnoseLinux.dir/system_repair.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/DiagnoseLinux.dir/system_repair.cpp.s"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/system_repair.cpp -o CMakeFiles/DiagnoseLinux.dir/system_repair.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/d/Tools/DiagnosePE/system_repair.cpp -o CMakeFiles/DiagnoseLinux.dir/system_repair.cpp.s
 
 CMakeFiles/DiagnoseLinux.dir/imgui/imgui.cpp.o: CMakeFiles/DiagnoseLinux.dir/flags.make
-CMakeFiles/DiagnoseLinux.dir/imgui/imgui.cpp.o: /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imgui.cpp
+CMakeFiles/DiagnoseLinux.dir/imgui/imgui.cpp.o: /mnt/d/Tools/DiagnosePE/imgui/imgui.cpp
 CMakeFiles/DiagnoseLinux.dir/imgui/imgui.cpp.o: CMakeFiles/DiagnoseLinux.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/DiagnoseLinux.dir/imgui/imgui.cpp.o"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/imgui/imgui.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/imgui/imgui.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/imgui/imgui.cpp.o -c /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imgui.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/d/Tools/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/DiagnoseLinux.dir/imgui/imgui.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/imgui/imgui.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/imgui/imgui.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/imgui/imgui.cpp.o -c /mnt/d/Tools/DiagnosePE/imgui/imgui.cpp
 
 CMakeFiles/DiagnoseLinux.dir/imgui/imgui.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/DiagnoseLinux.dir/imgui/imgui.cpp.i"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imgui.cpp > CMakeFiles/DiagnoseLinux.dir/imgui/imgui.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/d/Tools/DiagnosePE/imgui/imgui.cpp > CMakeFiles/DiagnoseLinux.dir/imgui/imgui.cpp.i
 
 CMakeFiles/DiagnoseLinux.dir/imgui/imgui.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/DiagnoseLinux.dir/imgui/imgui.cpp.s"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imgui.cpp -o CMakeFiles/DiagnoseLinux.dir/imgui/imgui.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/d/Tools/DiagnosePE/imgui/imgui.cpp -o CMakeFiles/DiagnoseLinux.dir/imgui/imgui.cpp.s
 
 CMakeFiles/DiagnoseLinux.dir/imgui/imgui_draw.cpp.o: CMakeFiles/DiagnoseLinux.dir/flags.make
-CMakeFiles/DiagnoseLinux.dir/imgui/imgui_draw.cpp.o: /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imgui_draw.cpp
+CMakeFiles/DiagnoseLinux.dir/imgui/imgui_draw.cpp.o: /mnt/d/Tools/DiagnosePE/imgui/imgui_draw.cpp
 CMakeFiles/DiagnoseLinux.dir/imgui/imgui_draw.cpp.o: CMakeFiles/DiagnoseLinux.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/DiagnoseLinux.dir/imgui/imgui_draw.cpp.o"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/imgui/imgui_draw.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/imgui/imgui_draw.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/imgui/imgui_draw.cpp.o -c /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imgui_draw.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/d/Tools/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/DiagnoseLinux.dir/imgui/imgui_draw.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/imgui/imgui_draw.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/imgui/imgui_draw.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/imgui/imgui_draw.cpp.o -c /mnt/d/Tools/DiagnosePE/imgui/imgui_draw.cpp
 
 CMakeFiles/DiagnoseLinux.dir/imgui/imgui_draw.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/DiagnoseLinux.dir/imgui/imgui_draw.cpp.i"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imgui_draw.cpp > CMakeFiles/DiagnoseLinux.dir/imgui/imgui_draw.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/d/Tools/DiagnosePE/imgui/imgui_draw.cpp > CMakeFiles/DiagnoseLinux.dir/imgui/imgui_draw.cpp.i
 
 CMakeFiles/DiagnoseLinux.dir/imgui/imgui_draw.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/DiagnoseLinux.dir/imgui/imgui_draw.cpp.s"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imgui_draw.cpp -o CMakeFiles/DiagnoseLinux.dir/imgui/imgui_draw.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/d/Tools/DiagnosePE/imgui/imgui_draw.cpp -o CMakeFiles/DiagnoseLinux.dir/imgui/imgui_draw.cpp.s
 
 CMakeFiles/DiagnoseLinux.dir/imgui/imgui_tables.cpp.o: CMakeFiles/DiagnoseLinux.dir/flags.make
-CMakeFiles/DiagnoseLinux.dir/imgui/imgui_tables.cpp.o: /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imgui_tables.cpp
+CMakeFiles/DiagnoseLinux.dir/imgui/imgui_tables.cpp.o: /mnt/d/Tools/DiagnosePE/imgui/imgui_tables.cpp
 CMakeFiles/DiagnoseLinux.dir/imgui/imgui_tables.cpp.o: CMakeFiles/DiagnoseLinux.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/DiagnoseLinux.dir/imgui/imgui_tables.cpp.o"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/imgui/imgui_tables.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/imgui/imgui_tables.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/imgui/imgui_tables.cpp.o -c /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imgui_tables.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/d/Tools/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/DiagnoseLinux.dir/imgui/imgui_tables.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/imgui/imgui_tables.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/imgui/imgui_tables.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/imgui/imgui_tables.cpp.o -c /mnt/d/Tools/DiagnosePE/imgui/imgui_tables.cpp
 
 CMakeFiles/DiagnoseLinux.dir/imgui/imgui_tables.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/DiagnoseLinux.dir/imgui/imgui_tables.cpp.i"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imgui_tables.cpp > CMakeFiles/DiagnoseLinux.dir/imgui/imgui_tables.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/d/Tools/DiagnosePE/imgui/imgui_tables.cpp > CMakeFiles/DiagnoseLinux.dir/imgui/imgui_tables.cpp.i
 
 CMakeFiles/DiagnoseLinux.dir/imgui/imgui_tables.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/DiagnoseLinux.dir/imgui/imgui_tables.cpp.s"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imgui_tables.cpp -o CMakeFiles/DiagnoseLinux.dir/imgui/imgui_tables.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/d/Tools/DiagnosePE/imgui/imgui_tables.cpp -o CMakeFiles/DiagnoseLinux.dir/imgui/imgui_tables.cpp.s
 
 CMakeFiles/DiagnoseLinux.dir/imgui/imgui_widgets.cpp.o: CMakeFiles/DiagnoseLinux.dir/flags.make
-CMakeFiles/DiagnoseLinux.dir/imgui/imgui_widgets.cpp.o: /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imgui_widgets.cpp
+CMakeFiles/DiagnoseLinux.dir/imgui/imgui_widgets.cpp.o: /mnt/d/Tools/DiagnosePE/imgui/imgui_widgets.cpp
 CMakeFiles/DiagnoseLinux.dir/imgui/imgui_widgets.cpp.o: CMakeFiles/DiagnoseLinux.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/DiagnoseLinux.dir/imgui/imgui_widgets.cpp.o"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/imgui/imgui_widgets.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/imgui/imgui_widgets.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/imgui/imgui_widgets.cpp.o -c /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imgui_widgets.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/d/Tools/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/DiagnoseLinux.dir/imgui/imgui_widgets.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/imgui/imgui_widgets.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/imgui/imgui_widgets.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/imgui/imgui_widgets.cpp.o -c /mnt/d/Tools/DiagnosePE/imgui/imgui_widgets.cpp
 
 CMakeFiles/DiagnoseLinux.dir/imgui/imgui_widgets.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/DiagnoseLinux.dir/imgui/imgui_widgets.cpp.i"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imgui_widgets.cpp > CMakeFiles/DiagnoseLinux.dir/imgui/imgui_widgets.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/d/Tools/DiagnosePE/imgui/imgui_widgets.cpp > CMakeFiles/DiagnoseLinux.dir/imgui/imgui_widgets.cpp.i
 
 CMakeFiles/DiagnoseLinux.dir/imgui/imgui_widgets.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/DiagnoseLinux.dir/imgui/imgui_widgets.cpp.s"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imgui_widgets.cpp -o CMakeFiles/DiagnoseLinux.dir/imgui/imgui_widgets.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/d/Tools/DiagnosePE/imgui/imgui_widgets.cpp -o CMakeFiles/DiagnoseLinux.dir/imgui/imgui_widgets.cpp.s
 
 CMakeFiles/DiagnoseLinux.dir/imgui/imgui_demo.cpp.o: CMakeFiles/DiagnoseLinux.dir/flags.make
-CMakeFiles/DiagnoseLinux.dir/imgui/imgui_demo.cpp.o: /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imgui_demo.cpp
+CMakeFiles/DiagnoseLinux.dir/imgui/imgui_demo.cpp.o: /mnt/d/Tools/DiagnosePE/imgui/imgui_demo.cpp
 CMakeFiles/DiagnoseLinux.dir/imgui/imgui_demo.cpp.o: CMakeFiles/DiagnoseLinux.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/DiagnoseLinux.dir/imgui/imgui_demo.cpp.o"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/imgui/imgui_demo.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/imgui/imgui_demo.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/imgui/imgui_demo.cpp.o -c /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imgui_demo.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/d/Tools/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/DiagnoseLinux.dir/imgui/imgui_demo.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/imgui/imgui_demo.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/imgui/imgui_demo.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/imgui/imgui_demo.cpp.o -c /mnt/d/Tools/DiagnosePE/imgui/imgui_demo.cpp
 
 CMakeFiles/DiagnoseLinux.dir/imgui/imgui_demo.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/DiagnoseLinux.dir/imgui/imgui_demo.cpp.i"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imgui_demo.cpp > CMakeFiles/DiagnoseLinux.dir/imgui/imgui_demo.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/d/Tools/DiagnosePE/imgui/imgui_demo.cpp > CMakeFiles/DiagnoseLinux.dir/imgui/imgui_demo.cpp.i
 
 CMakeFiles/DiagnoseLinux.dir/imgui/imgui_demo.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/DiagnoseLinux.dir/imgui/imgui_demo.cpp.s"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imgui_demo.cpp -o CMakeFiles/DiagnoseLinux.dir/imgui/imgui_demo.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/d/Tools/DiagnosePE/imgui/imgui_demo.cpp -o CMakeFiles/DiagnoseLinux.dir/imgui/imgui_demo.cpp.s
 
 CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_sdl2.cpp.o: CMakeFiles/DiagnoseLinux.dir/flags.make
-CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_sdl2.cpp.o: /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/backends/imgui_impl_sdl2.cpp
+CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_sdl2.cpp.o: /mnt/d/Tools/DiagnosePE/imgui/backends/imgui_impl_sdl2.cpp
 CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_sdl2.cpp.o: CMakeFiles/DiagnoseLinux.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_sdl2.cpp.o"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_sdl2.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_sdl2.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_sdl2.cpp.o -c /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/backends/imgui_impl_sdl2.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/d/Tools/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_sdl2.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_sdl2.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_sdl2.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_sdl2.cpp.o -c /mnt/d/Tools/DiagnosePE/imgui/backends/imgui_impl_sdl2.cpp
 
 CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_sdl2.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_sdl2.cpp.i"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/backends/imgui_impl_sdl2.cpp > CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_sdl2.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/d/Tools/DiagnosePE/imgui/backends/imgui_impl_sdl2.cpp > CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_sdl2.cpp.i
 
 CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_sdl2.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_sdl2.cpp.s"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/backends/imgui_impl_sdl2.cpp -o CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_sdl2.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/d/Tools/DiagnosePE/imgui/backends/imgui_impl_sdl2.cpp -o CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_sdl2.cpp.s
 
 CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_opengl3.cpp.o: CMakeFiles/DiagnoseLinux.dir/flags.make
-CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_opengl3.cpp.o: /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/backends/imgui_impl_opengl3.cpp
+CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_opengl3.cpp.o: /mnt/d/Tools/DiagnosePE/imgui/backends/imgui_impl_opengl3.cpp
 CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_opengl3.cpp.o: CMakeFiles/DiagnoseLinux.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_opengl3.cpp.o"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_opengl3.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_opengl3.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_opengl3.cpp.o -c /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/backends/imgui_impl_opengl3.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/mnt/d/Tools/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_opengl3.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_opengl3.cpp.o -MF CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_opengl3.cpp.o.d -o CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_opengl3.cpp.o -c /mnt/d/Tools/DiagnosePE/imgui/backends/imgui_impl_opengl3.cpp
 
 CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_opengl3.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_opengl3.cpp.i"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/backends/imgui_impl_opengl3.cpp > CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_opengl3.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/d/Tools/DiagnosePE/imgui/backends/imgui_impl_opengl3.cpp > CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_opengl3.cpp.i
 
 CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_opengl3.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_opengl3.cpp.s"
-	/usr/sbin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/backends/imgui_impl_opengl3.cpp -o CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_opengl3.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/d/Tools/DiagnosePE/imgui/backends/imgui_impl_opengl3.cpp -o CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_opengl3.cpp.s
 
 # Object files for target DiagnoseLinux
 DiagnoseLinux_OBJECTS = \
@@ -338,8 +338,9 @@ DiagnoseLinux: CMakeFiles/DiagnoseLinux.dir/build.make
 DiagnoseLinux: CMakeFiles/DiagnoseLinux.dir/compiler_depend.ts
 DiagnoseLinux: /usr/lib/libOpenGL.so
 DiagnoseLinux: /usr/lib/libGLX.so
+DiagnoseLinux: /usr/lib/libGLU.so
 DiagnoseLinux: CMakeFiles/DiagnoseLinux.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Linking CXX executable DiagnoseLinux"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/mnt/d/Tools/DiagnosePE/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Linking CXX executable DiagnoseLinux"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/DiagnoseLinux.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -351,6 +352,6 @@ CMakeFiles/DiagnoseLinux.dir/clean:
 .PHONY : CMakeFiles/DiagnoseLinux.dir/clean
 
 CMakeFiles/DiagnoseLinux.dir/depend:
-	cd /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/build /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/build /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/build/CMakeFiles/DiagnoseLinux.dir/DependInfo.cmake "--color=$(COLOR)" DiagnoseLinux
+	cd /mnt/d/Tools/DiagnosePE/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /mnt/d/Tools/DiagnosePE /mnt/d/Tools/DiagnosePE /mnt/d/Tools/DiagnosePE/build /mnt/d/Tools/DiagnosePE/build /mnt/d/Tools/DiagnosePE/build/CMakeFiles/DiagnoseLinux.dir/DependInfo.cmake "--color=$(COLOR)" DiagnoseLinux
 .PHONY : CMakeFiles/DiagnoseLinux.dir/depend
 

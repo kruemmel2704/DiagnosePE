@@ -1,9 +1,7 @@
 #include "ram_test.h"
 #include "platform_compat.h"
-#ifdef _WIN32
-#include <windows.h>
-#endif
 #include <chrono>
+#include <vector>
 
 RamTest::RamTest() {
     isRunning = false;
@@ -60,12 +58,30 @@ void RamTest::TestLoop() {
     SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_BELOW_NORMAL);
 #endif
 
+    struct RamChunk {
+        uint32_t* ptr;
+        size_t numElements;
+    };
+
+    std::vector<RamChunk> chunks;
     size_t numElements = testSizeInBytes / sizeof(uint32_t);
-    uint32_t* buffer = nullptr;
+    size_t tempSize = testSizeInBytes;
+    const size_t maxChunkSize = 256 * 1024 * 1024; // 256 MB per chunk
 
     try {
-        buffer = new uint32_t[numElements];
+        while (tempSize > 0) {
+            size_t currentChunkSize = std::min(tempSize, maxChunkSize);
+            size_t numEl = currentChunkSize / sizeof(uint32_t);
+            if (numEl > 0) {
+                uint32_t* p = new uint32_t[numEl];
+                chunks.push_back({p, numEl});
+            }
+            tempSize -= currentChunkSize;
+        }
     } catch (const std::bad_alloc&) {
+        for (auto& c : chunks) {
+            delete[] c.ptr;
+        }
         std::lock_guard<std::mutex> lock(stateMutex);
         progress.statusMsg = L"Fehler: Nicht gen\u00FCgend freier Arbeitsspeicher!";
         progress.isCompleted = true;
@@ -109,15 +125,22 @@ void RamTest::TestLoop() {
             }
 
             // 1. Write Phase
-            for (size_t i = 0; i < numElements; ++i) {
-                if (i % 65536 == 0) {
-                    std::lock_guard<std::mutex> lock(stateMutex);
-                    if (!isRunning) break;
-                    float progressFraction = (float)i / (float)numElements * 0.5f;
-                    progress.percentDone = progressFraction;
-                    progress.bytesTested = i * sizeof(uint32_t);
+            size_t elementsTested = 0;
+            for (size_t cIdx = 0; cIdx < chunks.size(); ++cIdx) {
+                uint32_t* chunkPtr = chunks[cIdx].ptr;
+                size_t chunkElements = chunks[cIdx].numElements;
+                for (size_t i = 0; i < chunkElements; ++i) {
+                    if (elementsTested % 65536 == 0) {
+                        std::lock_guard<std::mutex> lock(stateMutex);
+                        if (!isRunning) break;
+                        float progressFraction = (float)elementsTested / (float)numElements * 0.5f;
+                        progress.percentDone = progressFraction;
+                        progress.bytesTested = elementsTested * sizeof(uint32_t);
+                    }
+                    chunkPtr[i] = pattern;
+                    elementsTested++;
                 }
-                buffer[i] = pattern;
+                if (!isRunning) break;
             }
 
             {
@@ -129,28 +152,38 @@ void RamTest::TestLoop() {
             }
 
             // 2. Read and Verify Phase
-            for (size_t i = 0; i < numElements; ++i) {
-                if (i % 65536 == 0) {
-                    std::lock_guard<std::mutex> lock(stateMutex);
-                    if (!isRunning) break;
-                    float progressFraction = 0.5f + (float)i / (float)numElements * 0.5f;
-                    progress.percentDone = progressFraction;
-                    progress.bytesTested = i * sizeof(uint32_t);
-                }
+            elementsTested = 0;
+            for (size_t cIdx = 0; cIdx < chunks.size(); ++cIdx) {
+                uint32_t* chunkPtr = chunks[cIdx].ptr;
+                size_t chunkElements = chunks[cIdx].numElements;
+                for (size_t i = 0; i < chunkElements; ++i) {
+                    if (elementsTested % 65536 == 0) {
+                        std::lock_guard<std::mutex> lock(stateMutex);
+                        if (!isRunning) break;
+                        float progressFraction = 0.5f + (float)elementsTested / (float)numElements * 0.5f;
+                        progress.percentDone = progressFraction;
+                        progress.bytesTested = elementsTested * sizeof(uint32_t);
+                    }
 
-                uint32_t val = buffer[i];
-                if (val != pattern) {
-                    std::lock_guard<std::mutex> lock(stateMutex);
-                    progress.errorsFound++;
-                    buffer[i] = pattern; // Reset to expected to avoid cascading
+                    uint32_t val = chunkPtr[i];
+                    if (val != pattern) {
+                        std::lock_guard<std::mutex> lock(stateMutex);
+                        progress.errorsFound++;
+                        chunkPtr[i] = pattern; // Reset to expected to avoid cascading
+                    }
+                    elementsTested++;
                 }
+                if (!isRunning) break;
             }
         }
 
         pass++;
     }
 
-    delete[] buffer;
+    // Clean up allocated chunks
+    for (auto& c : chunks) {
+        delete[] c.ptr;
+    }
 
     std::lock_guard<std::mutex> lock(stateMutex);
     if (isRunning) {

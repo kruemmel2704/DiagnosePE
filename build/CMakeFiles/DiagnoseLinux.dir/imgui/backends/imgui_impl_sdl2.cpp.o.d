@@ -1,8 +1,7 @@
 CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_sdl2.cpp.o: \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/backends/imgui_impl_sdl2.cpp \
- /usr/include/stdc-predef.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imgui.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imconfig.h \
+ /mnt/d/Tools/DiagnosePE/imgui/backends/imgui_impl_sdl2.cpp \
+ /usr/include/stdc-predef.h /mnt/d/Tools/DiagnosePE/imgui/imgui.h \
+ /mnt/d/Tools/DiagnosePE/imgui/imconfig.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/16/include/float.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/16/include/stdarg.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/16/include/stddef.h \
@@ -13,7 +12,7 @@ CMakeFiles/DiagnoseLinux.dir/imgui/backends/imgui_impl_sdl2.cpp.o: \
  /usr/include/gnu/stubs.h /usr/include/gnu/stubs-64.h \
  /usr/include/bits/types/locale_t.h /usr/include/bits/types/__locale_t.h \
  /usr/include/strings.h /usr/include/assert.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/backends/imgui_impl_sdl2.h \
+ /mnt/d/Tools/DiagnosePE/imgui/backends/imgui_impl_sdl2.h \
  /usr/include/SDL2/SDL.h /usr/include/SDL2/SDL_main.h \
  /usr/include/SDL2/SDL_stdinc.h /usr/include/SDL2/SDL_config.h \
  /usr/include/SDL2/SDL_platform.h /usr/include/SDL2/begin_code.h \

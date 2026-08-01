@@ -1,8 +1,7 @@
 CMakeFiles/DiagnoseLinux.dir/system_repair.cpp.o: \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/system_repair.cpp \
- /usr/include/stdc-predef.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/system_repair.h \
- /usr/include/c++/16/string /usr/include/c++/16/bits/requires_hosted.h \
+ /mnt/d/Tools/DiagnosePE/system_repair.cpp /usr/include/stdc-predef.h \
+ /mnt/d/Tools/DiagnosePE/system_repair.h /usr/include/c++/16/string \
+ /usr/include/c++/16/bits/requires_hosted.h \
  /usr/include/c++/16/x86_64-pc-linux-gnu/bits/c++config.h \
  /usr/include/c++/16/x86_64-pc-linux-gnu/bits/os_defines.h \
  /usr/include/features.h /usr/include/features-time64.h \

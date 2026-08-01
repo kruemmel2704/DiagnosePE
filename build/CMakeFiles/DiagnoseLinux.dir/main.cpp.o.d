@@ -1,5 +1,4 @@
-CMakeFiles/DiagnoseLinux.dir/main.cpp.o: \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/main.cpp \
+CMakeFiles/DiagnoseLinux.dir/main.cpp.o: /mnt/d/Tools/DiagnosePE/main.cpp \
  /usr/include/stdc-predef.h /usr/include/c++/16/iostream \
  /usr/include/c++/16/bits/requires_hosted.h \
  /usr/include/c++/16/x86_64-pc-linux-gnu/bits/c++config.h \
@@ -316,30 +315,26 @@ CMakeFiles/DiagnoseLinux.dir/main.cpp.o: \
  /usr/include/SDL2/SDL_version.h /usr/include/SDL2/SDL_locale.h \
  /usr/include/SDL2/SDL_misc.h /usr/include/GL/gl.h \
  /usr/include/GL/glext.h /usr/include/KHR/khrplatform.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imgui.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imconfig.h \
- /usr/include/assert.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/backends/imgui_impl_sdl2.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/backends/imgui_impl_opengl3.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/gui.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/platform_compat.h \
+ /mnt/d/Tools/DiagnosePE/imgui/imgui.h \
+ /mnt/d/Tools/DiagnosePE/imgui/imconfig.h /usr/include/assert.h \
+ /mnt/d/Tools/DiagnosePE/imgui/backends/imgui_impl_sdl2.h \
+ /mnt/d/Tools/DiagnosePE/imgui/backends/imgui_impl_opengl3.h \
+ /mnt/d/Tools/DiagnosePE/gui.h /mnt/d/Tools/DiagnosePE/platform_compat.h \
  /usr/include/c++/16/cstring /usr/include/unistd.h \
  /usr/include/bits/posix_opt.h /usr/include/bits/environments.h \
  /usr/include/bits/confname.h /usr/include/bits/getopt_posix.h \
  /usr/include/bits/getopt_core.h /usr/include/bits/unistd_ext.h \
  /usr/include/linux/close_range.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/hardware_monitor.h \
- /usr/include/c++/16/chrono \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/battery_service.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/stress_test.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/ram_test.h \
+ /mnt/d/Tools/DiagnosePE/hardware_monitor.h /usr/include/c++/16/chrono \
+ /mnt/d/Tools/DiagnosePE/battery_service.h \
+ /mnt/d/Tools/DiagnosePE/stress_test.h /mnt/d/Tools/DiagnosePE/ram_test.h \
  /usr/include/c++/16/mutex /usr/include/c++/16/bits/std_mutex.h \
  /usr/include/c++/16/bits/unique_lock.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/tool_launcher.h \
- /usr/include/c++/16/map /usr/include/c++/16/bits/stl_tree.h \
+ /mnt/d/Tools/DiagnosePE/tool_launcher.h /usr/include/c++/16/map \
+ /usr/include/c++/16/bits/stl_tree.h \
  /usr/include/c++/16/ext/aligned_buffer.h \
  /usr/include/c++/16/bits/node_handle.h \
  /usr/include/c++/16/bits/stl_map.h \
  /usr/include/c++/16/bits/stl_multimap.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/pdf_writer.h \
- /usr/include/c++/16/sstream /usr/include/c++/16/bits/sstream.tcc
+ /mnt/d/Tools/DiagnosePE/pdf_writer.h /usr/include/c++/16/sstream \
+ /usr/include/c++/16/bits/sstream.tcc

@@ -25,14 +25,14 @@ mkdir -p "${BUILD_DIR}" "${OUT_DIR}" "${WORK_DIR}"
 
 # Install host prerequisites if missing
 echo "[+] Installiere Host-Voraussetzungen..."
-sudo pacman -S --needed --noconfirm archiso cmake make gcc git sdl2 mesa mesa-utils openbox xterm smartmontools gparted gsmartcontrol lm_sensors memtester stress-ng pciutils usbutils dmidecode nvme-cli lshw htop ntfs-3g chntpw glmark2 pkgconf
+sudo pacman -S --needed --noconfirm archiso cmake make gcc git sdl2 mesa mesa-utils openbox xterm smartmontools gparted gsmartcontrol lm_sensors memtester stress-ng pciutils usbutils dmidecode nvme-cli lshw htop ntfs-3g chntpw pkgconf 7zip glu
 
 # 2. Copy the official releng profile
 echo "[+] Kopiere archiso releng Profil..."
 cp -r /usr/share/archiso/configs/releng "${PROFILE_DIR}"
 
 # Update file permissions in profiledef.sh to make our binaries executable
-sed -i 's|\["/usr/local/bin/livecd-sound"\]="0:0:755"|\["/usr/local/bin/livecd-sound"\]="0:0:755"\n  \["/usr/local/bin/DiagnoseLinux"\]="0:0:755"\n  \["/usr/local/bin/windows_repair.sh"\]="0:0:755"|' "${PROFILE_DIR}/profiledef.sh"
+sed -i 's|\["/usr/local/bin/livecd-sound"\]="0:0:755"|\["/usr/local/bin/livecd-sound"\]="0:0:755"\n  \["/usr/local/bin/DiagnoseLinux"\]="0:0:755"\n  \["/usr/local/bin/windows_repair.sh"\]="0:0:755"\n  \["/usr/local/bin/furmark2"\]="0:0:755"\n  \["/opt/furmark/FurMark_GUI"\]="0:0:755"\n  \["/opt/furmark/furmark"\]="0:0:755"|' "${PROFILE_DIR}/profiledef.sh"
 
 # 3. Add packages to packages.x86_64
 echo "[+] Füge DiagnoseLinux-Pakete zum Profil hinzu..."
@@ -66,7 +66,7 @@ chntpw
 cmake
 make
 gcc
-glmark2
+glu
 EOF
 
 # 4. Compile DiagnoseLinux natively on the host
@@ -86,6 +86,38 @@ chmod +x "${PROFILE_DIR}/airootfs/usr/local/bin/DiagnoseLinux"
 
 cp "${PROJECT_DIR}/windows_repair.sh" "${PROFILE_DIR}/airootfs/usr/local/bin/windows_repair.sh"
 chmod +x "${PROFILE_DIR}/airootfs/usr/local/bin/windows_repair.sh"
+
+# Download and install FurMark 2 for Linux
+echo "[+] Installiere FurMark 2..."
+FURMARK_URL="https://gpumagick.com/downloads/files/2025/fm2/2_10_dbc69dd0a08da5ff09169a4fc759ddaa/FurMark_2.10.2_linux64.7z"
+FURMARK_DIR="${BUILD_DIR}/furmark_temp"
+mkdir -p "${FURMARK_DIR}"
+
+if [ -f "${PROJECT_DIR}/FurMark_2.10.2_linux64.7z" ]; then
+    echo "[+] Lokale FurMark 2 Datei im Projektordner gefunden. Kopiere..."
+    cp "${PROJECT_DIR}/FurMark_2.10.2_linux64.7z" "${FURMARK_DIR}/furmark.7z"
+elif [ -f "${PROJECT_DIR}/FurMark2_linux64.7z" ]; then
+    echo "[+] Lokale FurMark 2 Datei im Projektordner gefunden. Kopiere..."
+    cp "${PROJECT_DIR}/FurMark2_linux64.7z" "${FURMARK_DIR}/furmark.7z"
+else
+    echo "[+] Downloade FurMark 2 von Geeks3D..."
+    curl -L -o "${FURMARK_DIR}/furmark.7z" "${FURMARK_URL}"
+fi
+7z x "${FURMARK_DIR}/furmark.7z" -o"${FURMARK_DIR}" -y
+mkdir -p "${PROFILE_DIR}/airootfs/opt/furmark"
+cp -a "${FURMARK_DIR}/FurMark_linux64/." "${PROFILE_DIR}/airootfs/opt/furmark/"
+# Create wrapper script for FurMark 2 (copies to writable tmp directory to prevent read-only filesystem crash)
+mkdir -p "${PROFILE_DIR}/airootfs/usr/local/bin"
+cat << 'EOF' > "${PROFILE_DIR}/airootfs/usr/local/bin/furmark2"
+#!/bin/bash
+mkdir -p /tmp/furmark
+if [ ! -f /tmp/furmark/FurMark_GUI ]; then
+    cp -a /opt/furmark/. /tmp/furmark/
+    chmod -R 777 /tmp/furmark/
+fi
+cd /tmp/furmark && ./FurMark_GUI "$@"
+EOF
+chmod +x "${PROFILE_DIR}/airootfs/usr/local/bin/furmark2"
 
 # 6. Configure Autostart (kiosk mode)
 echo "[+] Konfiguriere Autostart (Kiosk-Modus)..."

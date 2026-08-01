@@ -1,8 +1,7 @@
 CMakeFiles/DiagnoseLinux.dir/pdf_writer.cpp.o: \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/pdf_writer.cpp \
- /usr/include/stdc-predef.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/pdf_writer.h \
- /usr/include/c++/16/string /usr/include/c++/16/bits/requires_hosted.h \
+ /mnt/d/Tools/DiagnosePE/pdf_writer.cpp /usr/include/stdc-predef.h \
+ /mnt/d/Tools/DiagnosePE/pdf_writer.h /usr/include/c++/16/string \
+ /usr/include/c++/16/bits/requires_hosted.h \
  /usr/include/c++/16/x86_64-pc-linux-gnu/bits/c++config.h \
  /usr/include/c++/16/x86_64-pc-linux-gnu/bits/os_defines.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -143,8 +142,7 @@ CMakeFiles/DiagnoseLinux.dir/pdf_writer.cpp.o: \
  /usr/include/c++/16/bits/ostream.tcc \
  /usr/include/c++/16/bits/istream.tcc \
  /usr/include/c++/16/bits/sstream.tcc \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/platform_compat.h \
- /usr/include/c++/16/cstdint \
+ /mnt/d/Tools/DiagnosePE/platform_compat.h /usr/include/c++/16/cstdint \
  /usr/lib/gcc/x86_64-pc-linux-gnu/16/include/stdint.h \
  /usr/include/stdint.h /usr/include/bits/stdint-uintn.h \
  /usr/include/bits/stdint-least.h /usr/include/c++/16/cstring \

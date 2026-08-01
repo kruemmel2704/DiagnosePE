@@ -75,13 +75,20 @@ int main(int argc, char** argv) {
     // 5. Main Loop
     bool running = true;
     while (running) {
-        Uint32 frame_start = SDL_GetTicks();
-
         SDL_Event event;
-        while (SDL_PollEvent(&event)) {
+        // Wait for an event, or timeout after 250ms to allow periodic telemetry updates
+        if (SDL_WaitEventTimeout(&event, 250)) {
             ImGui_ImplSDL2_ProcessEvent(&event);
             if (event.type == SDL_QUIT) {
                 running = false;
+            }
+            
+            // Poll any other pending events in the queue
+            while (SDL_PollEvent(&event)) {
+                ImGui_ImplSDL2_ProcessEvent(&event);
+                if (event.type == SDL_QUIT) {
+                    running = false;
+                }
             }
         }
 
@@ -103,12 +110,6 @@ int main(int argc, char** argv) {
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         SDL_GL_SwapWindow(window);
-
-        // Frame rate limiter (fallback when vsync is not working, e.g. in VMs)
-        Uint32 frame_time = SDL_GetTicks() - frame_start;
-        if (frame_time < 16) { // limit to ~60 FPS
-            SDL_Delay(16 - frame_time);
-        }
     }
 
     // Cleanup

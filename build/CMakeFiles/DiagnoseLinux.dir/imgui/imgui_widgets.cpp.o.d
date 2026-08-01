@@ -1,8 +1,7 @@
 CMakeFiles/DiagnoseLinux.dir/imgui/imgui_widgets.cpp.o: \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imgui_widgets.cpp \
- /usr/include/stdc-predef.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imgui.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imconfig.h \
+ /mnt/d/Tools/DiagnosePE/imgui/imgui_widgets.cpp \
+ /usr/include/stdc-predef.h /mnt/d/Tools/DiagnosePE/imgui/imgui.h \
+ /mnt/d/Tools/DiagnosePE/imgui/imconfig.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/16/include/float.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/16/include/stdarg.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/16/include/stddef.h \
@@ -13,10 +12,10 @@ CMakeFiles/DiagnoseLinux.dir/imgui/imgui_widgets.cpp.o: \
  /usr/include/gnu/stubs.h /usr/include/gnu/stubs-64.h \
  /usr/include/bits/types/locale_t.h /usr/include/bits/types/__locale_t.h \
  /usr/include/strings.h /usr/include/assert.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imgui_internal.h \
- /usr/include/stdio.h /usr/include/bits/types.h \
- /usr/include/bits/typesizes.h /usr/include/bits/time64.h \
- /usr/include/bits/types/__fpos_t.h /usr/include/bits/types/__mbstate_t.h \
+ /mnt/d/Tools/DiagnosePE/imgui/imgui_internal.h /usr/include/stdio.h \
+ /usr/include/bits/types.h /usr/include/bits/typesizes.h \
+ /usr/include/bits/time64.h /usr/include/bits/types/__fpos_t.h \
+ /usr/include/bits/types/__mbstate_t.h \
  /usr/include/bits/types/__fpos64_t.h /usr/include/bits/types/__FILE.h \
  /usr/include/bits/types/FILE.h /usr/include/bits/types/struct_FILE.h \
  /usr/include/bits/types/cookie_io_functions_t.h \
@@ -199,7 +198,7 @@ CMakeFiles/DiagnoseLinux.dir/imgui/imgui_widgets.cpp.o: \
  /usr/lib/gcc/x86_64-pc-linux-gnu/16/include/amxmovrsintrin.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/16/include/avx512bmmintrin.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/16/include/avx512bmmvlintrin.h \
- /mnt/c/Users/lars/OneDrive/Desktop/Projekte/DiagnosePE/imgui/imstb_textedit.h \
+ /mnt/d/Tools/DiagnosePE/imgui/imstb_textedit.h \
  /usr/lib/gcc/x86_64-pc-linux-gnu/16/include/stdint.h \
  /usr/include/stdint.h /usr/include/bits/wchar.h \
  /usr/include/bits/stdint-uintn.h /usr/include/bits/stdint-least.h
