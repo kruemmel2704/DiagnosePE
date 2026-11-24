@@ -71,13 +71,18 @@ function Invoke-Download {
 function Get-AdkPaths {
     param([string]$Arch = 'amd64')
 
+    # ProgramFiles(x86) eindeutig ueber die .NET-API holen (die ${env:...(x86)}-
+    # Interpolation ist unzuverlaessig und lieferte in CI einen falschen Pfad).
+    $pf86 = [Environment]::GetEnvironmentVariable('ProgramFiles(x86)')
+    $pf   = [Environment]::GetEnvironmentVariable('ProgramFiles')
+    $kit  = 'Windows Kits\10\Assessment and Deployment Kit'
     $roots = @(
-        "${env:ProgramFiles(x86)}\Windows Kits\10\Assessment and Deployment Kit",
-        "$env:ProgramFiles\Windows Kits\10\Assessment and Deployment Kit"
-    ) | Where-Object { Test-Path $_ }
+        $(if ($pf86) { Join-Path $pf86 $kit }),
+        $(if ($pf)   { Join-Path $pf   $kit })
+    ) | Where-Object { $_ -and (Test-Path $_) }
 
     if (-not $roots) {
-        Fail "Windows ADK nicht gefunden. Bitte Windows ADK + 'Windows PE add-on' installieren (siehe README)."
+        Fail "Windows ADK nicht gefunden (gesucht unter '$pf86' / '$pf'). Bitte Windows ADK + 'Windows PE add-on' installieren (siehe README)."
     }
     $adk = $roots[0]
 
