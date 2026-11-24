@@ -71,29 +71,47 @@ function Invoke-Download {
 function Get-AdkPaths {
     param([string]$Arch = 'amd64')
 
-    # ProgramFiles(x86) eindeutig ueber die .NET-API holen (die ${env:...(x86)}-
-    # Interpolation ist unzuverlaessig und lieferte in CI einen falschen Pfad).
+    # Robuste Erkennung: copype.cmd direkt suchen (die ${env:...(x86)}-
+    # Interpolation ist unzuverlaessig). Suchwurzeln = alle plausiblen
+    # "Windows Kits"-Baeume; aus dem Fund werden alle Pfade abgeleitet.
     $pf86 = [Environment]::GetEnvironmentVariable('ProgramFiles(x86)')
     $pf   = [Environment]::GetEnvironmentVariable('ProgramFiles')
-    $kit  = 'Windows Kits\10\Assessment and Deployment Kit'
-    $roots = @(
-        $(if ($pf86) { Join-Path $pf86 $kit }),
-        $(if ($pf)   { Join-Path $pf   $kit })
-    ) | Where-Object { $_ -and (Test-Path $_) }
+    $searchRoots = @(
+        $(if ($pf86) { Join-Path $pf86 'Windows Kits' }),
+        $(if ($pf)   { Join-Path $pf   'Windows Kits' }),
+        'C:\Program Files (x86)\Windows Kits',
+        'C:\Program Files\Windows Kits'
+    ) | Where-Object { $_ -and (Test-Path $_) } | Select-Object -Unique
 
-    if (-not $roots) {
-        Fail "Windows ADK nicht gefunden (gesucht unter '$pf86' / '$pf'). Bitte Windows ADK + 'Windows PE add-on' installieren (siehe README)."
+    $copype = $null
+    foreach ($r in $searchRoots) {
+        $hit = Get-ChildItem -Path $r -Recurse -Filter 'copype.cmd' -ErrorAction SilentlyContinue |
+               Select-Object -First 1
+        if ($hit) { $copype = $hit.FullName; break }
     }
-    $adk = $roots[0]
+    if (-not $copype) {
+        Fail "copype.cmd nicht gefunden (gesucht unter: $($searchRoots -join ', ')). 'Windows PE add-on' fehlt."
+    }
 
-    $peRoot  = Join-Path $adk "Windows Preinstallation Environment"
-    $copype  = Join-Path $peRoot "copype.cmd"
-    $makemed = Join-Path (Join-Path $adk "Deployment Tools\$Arch\Oscdimg") "oscdimg.exe"
-    $ocPath  = Join-Path $peRoot "$Arch\WinPE_OCs"
-    $makePe  = Join-Path $peRoot "MakeWinPEMedia.cmd"
+    $peRoot = Split-Path -Parent $copype                      # ...\Windows Preinstallation Environment
+    $adk    = Split-Path -Parent $peRoot                      # ...\Assessment and Deployment Kit
+    $ocPath = Join-Path $peRoot "$Arch\WinPE_OCs"
+    $makePe = Join-Path $peRoot "MakeWinPEMedia.cmd"
 
-    if (-not (Test-Path $copype)) { Fail "copype.cmd nicht gefunden ($copype). 'Windows PE add-on' fehlt." }
+    # oscdimg.exe ebenfalls robust suchen (fuer MakeWinPEMedia / ISO)
+    $makemed = $null
+    $oscHit = Get-ChildItem -Path (Join-Path $adk 'Deployment Tools') -Recurse -Filter 'oscdimg.exe' -ErrorAction SilentlyContinue |
+              Where-Object { $_.FullName -match "\\$Arch\\" } | Select-Object -First 1
+    if (-not $oscHit) {
+        $oscHit = Get-ChildItem -Path (Join-Path $adk 'Deployment Tools') -Recurse -Filter 'oscdimg.exe' -ErrorAction SilentlyContinue | Select-Object -First 1
+    }
+    if ($oscHit) { $makemed = $oscHit.FullName }
+
     if (-not (Test-Path $ocPath)) { Fail "WinPE_OCs nicht gefunden ($ocPath). 'Windows PE add-on' fehlt." }
+
+    Write-Info "ADK-Root:  $adk"
+    Write-Info "WinPERoot: $peRoot"
+    Write-Info "oscdimg:   $makemed"
 
     $dism = Join-Path $adk "Deployment Tools\$Arch\DISM\dism.exe"
     if (-not (Test-Path $dism)) { $dism = "$env:SystemRoot\System32\Dism.exe" }
@@ -115,8 +133,8 @@ function Get-AdkPaths {
 # laeuft der Build auch aus einer normalen (administrativen) Shell/CI heraus.
 function Set-AdkEnvironment {
     param([Parameter(Mandatory)] $Adk)
-    $env:WinPERoot   = $Adk.PeRoot
-    $env:OSCDImgRoot = Split-Path -Parent $Adk.Oscdimg
-    $env:DISMRoot    = Split-Path -Parent $Adk.Dism
+    $env:WinPERoot = $Adk.PeRoot
     $env:WinPERootNoArch = $Adk.PeRoot
+    if ($Adk.Oscdimg) { $env:OSCDImgRoot = Split-Path -Parent $Adk.Oscdimg }
+    if ($Adk.Dism)    { $env:DISMRoot    = Split-Path -Parent $Adk.Dism }
 }
