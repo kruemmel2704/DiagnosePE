@@ -28,7 +28,7 @@ on:
       - "config/**"
 
 permissions:
-  contents: read
+  contents: write   # fuer das Veroeffentlichen des ISO als Release-Asset
 
 jobs:
   build-iso:
@@ -169,3 +169,25 @@ jobs:
           path: diagnosepe/out/DiagnosePE.iso
           if-no-files-found: error
           retention-days: 14
+
+      - name: ISO als GitHub-Release veroeffentlichen
+        shell: pwsh
+        working-directory: diagnosepe
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag  = 'winpe-latest'
+          $iso  = '.\out\DiagnosePE.iso'
+          $size = '{0:N1} MB' -f ((Get-Item $iso).Length / 1MB)
+          $notes = "Automatisch gebautes, bootfaehiges WinPE-ISO (DiagnosePE).`n" +
+                   "Branch: $env:GITHUB_REF_NAME | Commit: $env:GITHUB_SHA | Groesse: $size`n`n" +
+                   "Enthaelt das PE-faehige DiagnoseTool (Vollbild, Netzwerk-Tab, FurMark GL/Vulkan) " +
+                   "und die WinPE-Komponenten. GPU-/NIC-Treiber sind in diesem Build NICHT injiziert " +
+                   "(per workflow_dispatch -> include_drivers aktivierbar). Nur zu Test-/Diagnosezwecken."
+          # vorhandenes rollierendes Release entfernen (Fehler ignorieren, falls noch keins existiert)
+          $ErrorActionPreference = 'Continue'
+          gh release delete $tag --cleanup-tag --yes 2>$null
+          $global:LASTEXITCODE = 0
+          $ErrorActionPreference = 'Stop'
+          gh release create $tag $iso --title "DiagnosePE WinPE (dev build)" --notes $notes --prerelease --target $env:GITHUB_SHA
+          Write-Host "Release veroeffentlicht: $tag ($size)"
