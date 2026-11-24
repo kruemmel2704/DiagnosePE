@@ -49,6 +49,7 @@ param(
 $repo = Get-RepoRoot
 Assert-Admin
 $adk = Get-AdkPaths -Arch $Arch
+Set-AdkEnvironment -Adk $adk   # WinPERoot/OSCDImgRoot setzen (copype/MakeWinPEMedia)
 Write-Ok "ADK gefunden: $($adk.Adk)"
 
 $media = Join-Path $WorkDir 'media'

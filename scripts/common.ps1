@@ -95,6 +95,7 @@ function Get-AdkPaths {
 
     return [pscustomobject]@{
         Adk           = $adk
+        PeRoot        = $peRoot
         CopyPe        = $copype
         MakeWinPEMedia= $makePe
         Oscdimg       = $makemed
@@ -102,4 +103,15 @@ function Get-AdkPaths {
         Dism          = $dism
         Arch          = $Arch
     }
+}
+
+# Setzt die Umgebungsvariablen, die copype.cmd / MakeWinPEMedia.cmd erwarten
+# (sonst nur ueber "Deployment and Imaging Tools Environment" gesetzt). Damit
+# laeuft der Build auch aus einer normalen (administrativen) Shell/CI heraus.
+function Set-AdkEnvironment {
+    param([Parameter(Mandatory)] $Adk)
+    $env:WinPERoot   = $Adk.PeRoot
+    $env:OSCDImgRoot = Split-Path -Parent $Adk.Oscdimg
+    $env:DISMRoot    = Split-Path -Parent $Adk.Dism
+    $env:WinPERootNoArch = $Adk.PeRoot
 }

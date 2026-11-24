@@ -98,13 +98,14 @@ jobs:
           choco install 7zip -y --no-progress
           .\scripts\Get-Drivers.ps1
 
-      - name: WinPE-ISO bauen (in ADK-Umgebung)
-        shell: cmd
+      - name: WinPE-ISO bauen
+        shell: pwsh
         working-directory: diagnosepe
+        env:
+          INCLUDE_DRIVERS: ${{ github.event_name == 'workflow_dispatch' && inputs.include_drivers }}
         run: |
-          set DANDI="%ProgramFiles(x86)%\Windows Kits\10\Assessment and Deployment Kit\Deployment Tools\DandISetEnv.bat"
-          if "${{ github.event_name == 'workflow_dispatch' && inputs.include_drivers }}"=="true" (set DRV=) else (set DRV=-SkipDrivers)
-          call %DANDI% && powershell -NoProfile -ExecutionPolicy Bypass -File ".\Build-DiagnosePE.ps1" -SkipApp %DRV%
+          $drv = if ($env:INCLUDE_DRIVERS -eq 'true') { @() } else { @('-SkipDrivers') }
+          .\Build-DiagnosePE.ps1 -SkipApp @drv
 
       - name: ISO verifizieren (DISM, auf dem Runner)
         shell: pwsh
