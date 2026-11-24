@@ -135,6 +135,11 @@ function Set-AdkEnvironment {
     param([Parameter(Mandatory)] $Adk)
     $env:WinPERoot = $Adk.PeRoot
     $env:WinPERootNoArch = $Adk.PeRoot
-    if ($Adk.Oscdimg) { $env:OSCDImgRoot = Split-Path -Parent $Adk.Oscdimg }
-    if ($Adk.Dism)    { $env:DISMRoot    = Split-Path -Parent $Adk.Dism }
+    if ($Adk.Oscdimg) {
+        $oscDir = Split-Path -Parent $Adk.Oscdimg
+        $env:OSCDImgRoot = $oscDir
+        # MakeWinPEMedia.cmd ruft 'oscdimg' ohne Pfad auf -> Verzeichnis in PATH legen.
+        if (($env:PATH -split ';') -notcontains $oscDir) { $env:PATH = "$oscDir;$env:PATH" }
+    }
+    if ($Adk.Dism) { $env:DISMRoot = Split-Path -Parent $Adk.Dism }
 }
