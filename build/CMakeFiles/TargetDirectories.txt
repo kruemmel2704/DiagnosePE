@@ -1,3 +1,0 @@
-/mnt/d/Tools/DiagnosePE/build/CMakeFiles/DiagnoseLinux.dir
-/mnt/d/Tools/DiagnosePE/build/CMakeFiles/edit_cache.dir
-/mnt/d/Tools/DiagnosePE/build/CMakeFiles/rebuild_cache.dir

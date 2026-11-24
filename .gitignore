@@ -1,7 +1,24 @@
-/.vs
-/DiagnosePE.iso
-bin/
-build_live/
+# --- DiagnosePE WinPE build artifacts ---
+# Arbeits- und Ausgabeverzeichnisse des Build-Prozesses
+/work/
+/out/
 *.iso
-obj/
-legacy_winpe_backup/
+*.wim
+*.log
+
+# Heruntergeladene / entpackte Treiber (zu groß fürs Repo).
+# Es bleiben nur die README-/.gitkeep-Platzhalter erhalten.
+/drivers/**/*
+!/drivers/**/
+!/drivers/**/README.md
+!/drivers/**/.gitkeep
+
+# Heruntergeladene DiagnoseTool-Binaries / FurMark
+/app/
+*.exe
+*.zip
+*.7z
+
+# OS-Müll
+.DS_Store
+Thumbs.db
