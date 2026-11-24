@@ -1,0 +1,167 @@
+name: Build DiagnosePE ISO
+
+# Baut das bootfaehige WinPE-ISO auf einem Windows-Runner (mit Windows ADK),
+# bettet das PE-faehige DiagnoseTool aus dem Dev-Branch ein und verifiziert
+# das Ergebnis per DISM direkt auf dem Runner. Das ISO wird als Artifact
+# hochgeladen.
+#
+# GPU-/NIC-Treiber werden hier NICHT injiziert (Default): sie sind GB-gross und
+# der eigentliche GPU-/FurMark-Test braucht ohnehin echte Hardware. Die
+# Treiber-Injektion nutzt denselben DISM-Schritt und kann mit include_drivers
+# bzw. lokal aktiviert werden.
+
+on:
+  workflow_dispatch:
+    inputs:
+      include_drivers:
+        description: "GPU/NIC-Treiber injizieren (langsam, braucht gueltige URLs)"
+        type: boolean
+        default: false
+  push:
+    branches:
+      - ccr-43e3810d-xbbqag
+    paths:
+      - ".github/workflows/build-diagnosepe.yml"
+      - "Build-DiagnosePE.ps1"
+      - "scripts/**"
+      - "winpe/**"
+      - "config/**"
+
+permissions:
+  contents: read
+
+jobs:
+  build-iso:
+    runs-on: windows-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: DiagnosePE auschecken
+        uses: actions/checkout@v4
+        with:
+          path: diagnosepe
+
+      - name: DiagnoseTool (Dev-Branch) auschecken
+        uses: actions/checkout@v4
+        with:
+          repository: kruemmel2704/DiagnoseTool
+          ref: ccr-43e3810d-xbbqag
+          path: DiagnoseTool
+
+      - name: .NET 10 SDK einrichten
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Windows ADK + WinPE add-on installieren
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $dl = "$env:RUNNER_TEMP\adk"
+          New-Item -ItemType Directory -Force -Path $dl | Out-Null
+
+          # Offizielle Microsoft-FWLinks (ADK 10.1.28000.3481, Okt 2026)
+          $adkUrl   = 'https://go.microsoft.com/fwlink/?linkid=2337875'
+          $winpeUrl = 'https://go.microsoft.com/fwlink/?linkid=2337681'
+
+          Write-Host "Lade ADK-Setup..."
+          Invoke-WebRequest -Uri $adkUrl   -OutFile "$dl\adksetup.exe"      -UseBasicParsing
+          Write-Host "Lade WinPE-add-on-Setup..."
+          Invoke-WebRequest -Uri $winpeUrl -OutFile "$dl\adkwinpesetup.exe" -UseBasicParsing
+
+          function Install-Adk($exe, $feature, $name) {
+            Write-Host "Installiere $name ($feature) ..."
+            $p = Start-Process -FilePath $exe -ArgumentList @('/quiet','/norestart','/features',$feature) -Wait -PassThru
+            if ($p.ExitCode -ne 0 -and $p.ExitCode -ne 3010) { throw "$name Installer ExitCode $($p.ExitCode)" }
+            Write-Host "$name installiert (ExitCode $($p.ExitCode))."
+          }
+          Install-Adk "$dl\adksetup.exe"      'OptionId.DeploymentTools'                 'Windows ADK (Deployment Tools)'
+          Install-Adk "$dl\adkwinpesetup.exe" 'OptionId.WindowsPreinstallationEnvironment' 'WinPE add-on'
+
+          $pe = "${env:ProgramFiles(x86)}\Windows Kits\10\Assessment and Deployment Kit\Windows Preinstallation Environment"
+          if (-not (Test-Path (Join-Path $pe 'copype.cmd'))) { throw "copype.cmd fehlt - WinPE add-on nicht korrekt installiert." }
+          Write-Host "ADK/WinPE bereit: $pe"
+
+      - name: PE-faehiges DiagnoseTool aus Quellcode bauen
+        shell: pwsh
+        working-directory: diagnosepe
+        run: |
+          .\scripts\Get-DiagnoseTool.ps1 -FromSource -SourcePath "$env:GITHUB_WORKSPACE\DiagnoseTool"
+          if (-not (Test-Path '.\app\DiagnoseTool\DiagnoseTool.exe')) { throw 'DiagnoseTool.exe wurde nicht gebaut.' }
+          Get-Item '.\app\DiagnoseTool\DiagnoseTool.exe' | Format-List Name,Length
+
+      - name: (optional) Treiber beschaffen
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.include_drivers }}
+        shell: pwsh
+        working-directory: diagnosepe
+        run: |
+          choco install 7zip -y --no-progress
+          .\scripts\Get-Drivers.ps1
+
+      - name: WinPE-ISO bauen (in ADK-Umgebung)
+        shell: cmd
+        working-directory: diagnosepe
+        run: |
+          set DANDI="%ProgramFiles(x86)%\Windows Kits\10\Assessment and Deployment Kit\Deployment Tools\DandISetEnv.bat"
+          if "${{ github.event_name == 'workflow_dispatch' && inputs.include_drivers }}"=="true" (set DRV=) else (set DRV=-SkipDrivers)
+          call %DANDI% && powershell -NoProfile -ExecutionPolicy Bypass -File ".\Build-DiagnosePE.ps1" -SkipApp %DRV%
+
+      - name: ISO verifizieren (DISM, auf dem Runner)
+        shell: pwsh
+        working-directory: diagnosepe
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $iso = '.\out\DiagnosePE.iso'
+          if (-not (Test-Path $iso)) { throw "ISO fehlt: $iso" }
+          Write-Host ("== ISO: {0:N1} MB ==" -f ((Get-Item $iso).Length/1MB))
+
+          # boot.wim aus dem Build-Workverzeichnis read-only mounten und Inhalt pruefen
+          $bootWim = '.\work\winpe\media\sources\boot.wim'
+          if (-not (Test-Path $bootWim)) { throw "boot.wim fehlt: $bootWim" }
+          $mnt = "$env:RUNNER_TEMP\verify-mount"
+          New-Item -ItemType Directory -Force -Path $mnt | Out-Null
+
+          Write-Host "== Image-Info =="
+          dism /English /Get-ImageInfo /ImageFile:$bootWim /Index:1 | Select-String 'Name|Size|Architecture'
+
+          Write-Host "== boot.wim read-only mounten =="
+          dism /English /Mount-Image /ImageFile:$bootWim /Index:1 /MountDir:$mnt /ReadOnly
+          try {
+            $checks = @(
+              'DiagnoseTool\DiagnoseTool.exe',
+              'DiagnoseTool\boot\Start-DiagnosePE.cmd',
+              'DiagnoseTool\boot\Start-DiagnosePE.ps1',
+              'Windows\System32\winpeshl.ini'
+            )
+            $fail = $false
+            foreach ($c in $checks) {
+              $p = Join-Path $mnt $c
+              if (Test-Path $p) { Write-Host "  [OK]  $c" } else { Write-Host "  [FEHLT] $c"; $fail = $true }
+            }
+            Write-Host "== winpeshl.ini Inhalt =="
+            Get-Content (Join-Path $mnt 'Windows\System32\winpeshl.ini') | Write-Host
+
+            Write-Host "== FurMark vorhanden? =="
+            $fur = Get-ChildItem (Join-Path $mnt 'DiagnoseTool\FurMark') -Filter 'furmark*.exe' -ErrorAction SilentlyContinue
+            if ($fur) { $fur | ForEach-Object { Write-Host "  [OK] $($_.Name)" } } else { Write-Host "  [HINWEIS] FurMark nicht vorextrahiert (App packt zur Laufzeit aus)" }
+
+            Write-Host "== Installierte WinPE-Pakete (Auszug) =="
+            dism /English /Image:$mnt /Get-Packages | Select-String 'WinPE-WMI|NetFx|PowerShell|Scripting|WiFi|Dot3Svc|SecureStartup|EnhancedStorage|FMAPI'
+
+            Write-Host "== Injizierte Treiber =="
+            dism /English /Image:$mnt /Get-Drivers | Select-String 'Published Name|Class Name|Provider' | Select-Object -First 40
+
+            if ($fail) { throw 'Verifikation fehlgeschlagen: erwartete Datei(en) fehlen im boot.wim.' }
+            Write-Host "== VERIFIKATION OK =="
+          }
+          finally {
+            dism /English /Unmount-Image /MountDir:$mnt /Discard | Out-Null
+          }
+
+      - name: ISO als Artifact hochladen
+        uses: actions/upload-artifact@v4
+        with:
+          name: DiagnosePE-ISO
+          path: diagnosepe/out/DiagnosePE.iso
+          if-no-files-found: error
+          retention-days: 14
