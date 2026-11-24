@@ -104,8 +104,11 @@ jobs:
         env:
           INCLUDE_DRIVERS: ${{ github.event_name == 'workflow_dispatch' && inputs.include_drivers }}
         run: |
-          $drv = if ($env:INCLUDE_DRIVERS -eq 'true') { @() } else { @('-SkipDrivers') }
-          .\Build-DiagnosePE.ps1 -SkipApp @drv
+          if ($env:INCLUDE_DRIVERS -eq 'true') {
+            .\Build-DiagnosePE.ps1 -SkipApp
+          } else {
+            .\Build-DiagnosePE.ps1 -SkipApp -SkipDrivers
+          }
 
       - name: ISO verifizieren (DISM, auf dem Runner)
         shell: pwsh
