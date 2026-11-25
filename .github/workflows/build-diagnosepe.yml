@@ -90,8 +90,36 @@ jobs:
           if (-not (Test-Path '.\app\DiagnoseTool\DiagnoseTool.exe')) { throw 'DiagnoseTool.exe wurde nicht gebaut.' }
           Get-Item '.\app\DiagnoseTool\DiagnoseTool.exe' | Format-List Name,Length
 
+      - name: Mesa (Software-OpenGL) fuer FurMark beschaffen
+        shell: pwsh
+        working-directory: diagnosepe
+        run: |
+          # Mesa llvmpipe liefert OpenGL 4.x in Software -> FurMark rendert auch
+          # ohne echte GPU (z. B. in einer VM). Das Boot-Skript aktiviert es nur,
+          # wenn keine dedizierte GPU erkannt wird. Fehlschlag bricht den Build NICHT ab.
+          try {
+            choco install 7zip -y --no-progress | Out-Null
+            $ver = '26.3.1'
+            $url = "https://github.com/pal1000/mesa-dist-win/releases/download/$ver/mesa3d-$ver-release-msvc.7z"
+            $tmp = "$env:RUNNER_TEMP\mesa"; New-Item -ItemType Directory -Force -Path $tmp | Out-Null
+            $arc = Join-Path $tmp 'mesa.7z'
+            Write-Host "Lade Mesa $ver ..."
+            Invoke-WebRequest -Uri $url -OutFile $arc -UseBasicParsing
+            & "$env:ProgramFiles\7-Zip\7z.exe" x -y "-o$tmp\x" $arc | Out-Null
+            $gl = Get-ChildItem -Path "$tmp\x" -Recurse -Filter 'opengl32.dll' -ErrorAction SilentlyContinue |
+                  Where-Object { $_.FullName -match '\\x64\\' } | Select-Object -First 1
+            if (-not $gl) { $gl = Get-ChildItem -Path "$tmp\x" -Recurse -Filter 'opengl32.dll' -ErrorAction SilentlyContinue | Select-Object -First 1 }
+            if (-not $gl) { throw 'opengl32.dll im Mesa-Archiv nicht gefunden' }
+            $dst = '.\app\DiagnoseTool\mesa'; New-Item -ItemType Directory -Force -Path $dst | Out-Null
+            Copy-Item $gl.FullName (Join-Path $dst 'opengl32.dll') -Force
+            $mb = [math]::Round((Get-Item (Join-Path $dst 'opengl32.dll')).Length / 1MB, 1)
+            Write-Host "Mesa opengl32.dll bereit ($mb MB) -> $dst"
+          } catch {
+            Write-Warning "Mesa-Beschaffung fehlgeschlagen: $($_.Exception.Message). FurMark-Software-Fallback steht dann nicht zur Verfuegung."
+          }
+
       - name: (optional) Treiber beschaffen
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.include_drivers }}
+        if: ${{ (github.event_name == 'workflow_dispatch' && inputs.include_drivers) || contains(github.event.head_commit.message, '[drivers]') }}
         shell: pwsh
         working-directory: diagnosepe
         run: |
@@ -102,7 +130,7 @@ jobs:
         shell: pwsh
         working-directory: diagnosepe
         env:
-          INCLUDE_DRIVERS: ${{ github.event_name == 'workflow_dispatch' && inputs.include_drivers }}
+          INCLUDE_DRIVERS: ${{ (github.event_name == 'workflow_dispatch' && inputs.include_drivers) || contains(github.event.head_commit.message, '[drivers]') }}
         run: |
           if ($env:INCLUDE_DRIVERS -eq 'true') {
             .\Build-DiagnosePE.ps1 -SkipApp
