@@ -116,10 +116,16 @@ jobs:
                   Where-Object { $_.FullName -match '\\x64\\' } | Select-Object -First 1
             if (-not $gl) { $gl = Get-ChildItem -Path "$tmp\x" -Recurse -Filter 'opengl32.dll' -ErrorAction SilentlyContinue | Select-Object -First 1 }
             if (-not $gl) { throw 'opengl32.dll im Mesa-Archiv nicht gefunden' }
+            # WICHTIG: moderne Mesa-Builds splitten opengl32.dll (duenner Loader) und
+            # die eigentliche llvmpipe-Implementierung (libgallium_wgl.dll o. ae.).
+            # Daher ALLE DLLs des x64-Ordners uebernehmen.
+            $mesaDir = Split-Path -Parent $gl.FullName
             $dst = '.\app\DiagnoseTool\mesa'; New-Item -ItemType Directory -Force -Path $dst | Out-Null
-            Copy-Item $gl.FullName (Join-Path $dst 'opengl32.dll') -Force
-            $mb = [math]::Round((Get-Item (Join-Path $dst 'opengl32.dll')).Length / 1MB, 1)
-            Write-Host "Mesa opengl32.dll bereit ($mb MB) aus $($gl.FullName)"
+            Copy-Item (Join-Path $mesaDir '*.dll') $dst -Force
+            $dlls = Get-ChildItem $dst -Filter *.dll
+            $tot = [math]::Round(($dlls | Measure-Object Length -Sum).Sum / 1MB, 1)
+            Write-Host "Mesa: $($dlls.Count) DLL(s), zusammen $tot MB aus $mesaDir"
+            $dlls | ForEach-Object { Write-Host ("  {0} ({1:N1} MB)" -f $_.Name, ($_.Length/1MB)) }
           } catch {
             Write-Warning "Mesa-Beschaffung fehlgeschlagen: $($_.Exception.Message). FurMark-Software-Fallback steht dann nicht zur Verfuegung."
           }
@@ -184,8 +190,13 @@ jobs:
             if ($fur) { $fur | ForEach-Object { Write-Host "  [OK] $($_.Name)" } } else { Write-Host "  [HINWEIS] FurMark nicht vorextrahiert (App packt zur Laufzeit aus)" }
 
             Write-Host "== Mesa Software-OpenGL (fuer GPU-lose VMs)? =="
-            $mesa = Join-Path $mnt 'DiagnoseTool\mesa\opengl32.dll'
-            if (Test-Path $mesa) { Write-Host ("  [OK] Mesa opengl32.dll: {0:N1} MB" -f ((Get-Item $mesa).Length/1MB)) } else { Write-Host "  [HINWEIS] Mesa nicht enthalten (FurMark braucht dann echte GPU)" }
+            $mesaDir = Join-Path $mnt 'DiagnoseTool\mesa'
+            if (Test-Path (Join-Path $mesaDir 'opengl32.dll')) {
+              $md = Get-ChildItem $mesaDir -Filter *.dll
+              $mt = [math]::Round(($md | Measure-Object Length -Sum).Sum/1MB,1)
+              Write-Host "  [OK] Mesa: $($md.Count) DLL(s), $mt MB"
+              $md | ForEach-Object { Write-Host ("     {0} ({1:N1} MB)" -f $_.Name, ($_.Length/1MB)) }
+            } else { Write-Host "  [HINWEIS] Mesa nicht enthalten (FurMark braucht dann echte GPU)" }
 
             Write-Host "== Installierte WinPE-Pakete (Auszug) =="
             dism /English /Image:$mnt /Get-Packages | Select-String 'WinPE-WMI|NetFx|PowerShell|Scripting|WiFi|Dot3Svc|SecureStartup|EnhancedStorage|FMAPI'
