@@ -224,19 +224,25 @@ jobs:
         working-directory: diagnosepe
         env:
           GH_TOKEN: ${{ github.token }}
+          INCLUDE_DRIVERS: ${{ (github.event_name == 'workflow_dispatch' && inputs.include_drivers) || contains(github.event.head_commit.message, '[with-drivers]') }}
         run: |
-          $tag  = 'winpe-latest'
+          # Treiber-ISO bekommt ein eigenes Tag, damit es die schlanke VM-ISO
+          # (winpe-latest) nicht ueberschreibt.
+          $withDrv = ($env:INCLUDE_DRIVERS -eq 'true')
+          $tag   = if ($withDrv) { 'winpe-drivers' } else { 'winpe-latest' }
+          $title = if ($withDrv) { 'DiagnosePE WinPE + GPU/NIC-Treiber (dev build)' } else { 'DiagnosePE WinPE (dev build)' }
+          $drvNote = if ($withDrv) { "MIT injizierten GPU-/NIC-Treibern (fuer echte Hardware)." } else { "GPU-/NIC-Treiber NICHT injiziert (schlanke Variante, ideal fuer VM-Tests)." }
           $iso  = '.\out\DiagnosePE.iso'
           $size = '{0:N1} MB' -f ((Get-Item $iso).Length / 1MB)
           $notes = "Automatisch gebautes, bootfaehiges WinPE-ISO (DiagnosePE).`n" +
                    "Branch: $env:GITHUB_REF_NAME | Commit: $env:GITHUB_SHA | Groesse: $size`n`n" +
-                   "Enthaelt das PE-faehige DiagnoseTool (Vollbild, Netzwerk-Tab, FurMark GL/Vulkan) " +
-                   "und die WinPE-Komponenten. GPU-/NIC-Treiber sind in diesem Build NICHT injiziert " +
-                   "(per workflow_dispatch -> include_drivers aktivierbar). Nur zu Test-/Diagnosezwecken."
+                   "Enthaelt das PE-faehige DiagnoseTool (Vollbild, Netzwerk-Tab, FurMark GL/Vulkan, " +
+                   "Mesa-Software-OpenGL fuer GPU-lose VMs) und die WinPE-Komponenten. $drvNote`n" +
+                   "Nur zu Test-/Diagnosezwecken."
           # vorhandenes rollierendes Release entfernen (Fehler ignorieren, falls noch keins existiert)
           $ErrorActionPreference = 'Continue'
           gh release delete $tag --cleanup-tag --yes 2>$null
           $global:LASTEXITCODE = 0
           $ErrorActionPreference = 'Stop'
-          gh release create $tag $iso --title "DiagnosePE WinPE (dev build)" --notes $notes --prerelease --target $env:GITHUB_SHA
+          gh release create $tag $iso --title $title --notes $notes --prerelease --target $env:GITHUB_SHA
           Write-Host "Release veroeffentlicht: $tag ($size)"
