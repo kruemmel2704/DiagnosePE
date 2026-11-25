@@ -93,18 +93,24 @@ jobs:
       - name: Mesa (Software-OpenGL) fuer FurMark beschaffen
         shell: pwsh
         working-directory: diagnosepe
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           # Mesa llvmpipe liefert OpenGL 4.x in Software -> FurMark rendert auch
           # ohne echte GPU (z. B. in einer VM). Das Boot-Skript aktiviert es nur,
           # wenn keine dedizierte GPU erkannt wird. Fehlschlag bricht den Build NICHT ab.
+          # Asset-URL selbstfindend ueber die GitHub-API (robust gegen Versionswechsel).
           try {
             choco install 7zip -y --no-progress | Out-Null
-            $ver = '26.3.1'
-            $url = "https://github.com/pal1000/mesa-dist-win/releases/download/$ver/mesa3d-$ver-release-msvc.7z"
+            $h = @{ 'User-Agent' = 'DiagnosePE'; Authorization = "Bearer $env:GH_TOKEN" }
+            $rel = Invoke-RestMethod -Headers $h -Uri 'https://api.github.com/repos/pal1000/mesa-dist-win/releases/latest'
+            $asset = $rel.assets | Where-Object { $_.name -match 'release-msvc.*\.7z$' } | Select-Object -First 1
+            if (-not $asset) { $asset = $rel.assets | Where-Object { $_.name -match '\.7z$' } | Select-Object -First 1 }
+            if (-not $asset) { throw 'Kein 7z-Asset im Mesa-Release gefunden' }
+            Write-Host "Mesa-Release $($rel.tag_name): $($asset.name)"
             $tmp = "$env:RUNNER_TEMP\mesa"; New-Item -ItemType Directory -Force -Path $tmp | Out-Null
             $arc = Join-Path $tmp 'mesa.7z'
-            Write-Host "Lade Mesa $ver ..."
-            Invoke-WebRequest -Uri $url -OutFile $arc -UseBasicParsing
+            Invoke-WebRequest -Uri $asset.browser_download_url -OutFile $arc -UseBasicParsing
             & "$env:ProgramFiles\7-Zip\7z.exe" x -y "-o$tmp\x" $arc | Out-Null
             $gl = Get-ChildItem -Path "$tmp\x" -Recurse -Filter 'opengl32.dll' -ErrorAction SilentlyContinue |
                   Where-Object { $_.FullName -match '\\x64\\' } | Select-Object -First 1
@@ -113,7 +119,7 @@ jobs:
             $dst = '.\app\DiagnoseTool\mesa'; New-Item -ItemType Directory -Force -Path $dst | Out-Null
             Copy-Item $gl.FullName (Join-Path $dst 'opengl32.dll') -Force
             $mb = [math]::Round((Get-Item (Join-Path $dst 'opengl32.dll')).Length / 1MB, 1)
-            Write-Host "Mesa opengl32.dll bereit ($mb MB) -> $dst"
+            Write-Host "Mesa opengl32.dll bereit ($mb MB) aus $($gl.FullName)"
           } catch {
             Write-Warning "Mesa-Beschaffung fehlgeschlagen: $($_.Exception.Message). FurMark-Software-Fallback steht dann nicht zur Verfuegung."
           }
@@ -176,6 +182,10 @@ jobs:
             Write-Host "== FurMark vorhanden? =="
             $fur = Get-ChildItem (Join-Path $mnt 'DiagnoseTool\FurMark') -Filter 'furmark*.exe' -ErrorAction SilentlyContinue
             if ($fur) { $fur | ForEach-Object { Write-Host "  [OK] $($_.Name)" } } else { Write-Host "  [HINWEIS] FurMark nicht vorextrahiert (App packt zur Laufzeit aus)" }
+
+            Write-Host "== Mesa Software-OpenGL (fuer GPU-lose VMs)? =="
+            $mesa = Join-Path $mnt 'DiagnoseTool\mesa\opengl32.dll'
+            if (Test-Path $mesa) { Write-Host ("  [OK] Mesa opengl32.dll: {0:N1} MB" -f ((Get-Item $mesa).Length/1MB)) } else { Write-Host "  [HINWEIS] Mesa nicht enthalten (FurMark braucht dann echte GPU)" }
 
             Write-Host "== Installierte WinPE-Pakete (Auszug) =="
             dism /English /Image:$mnt /Get-Packages | Select-String 'WinPE-WMI|NetFx|PowerShell|Scripting|WiFi|Dot3Svc|SecureStartup|EnhancedStorage|FMAPI'
