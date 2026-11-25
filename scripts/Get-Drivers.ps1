@@ -110,7 +110,12 @@ foreach ($kv in $entries) {
     Write-Ok "$infCount INF-Datei(en) -> $target"
     $summary += [pscustomobject]@{ Treiber=$key; Status="OK ($infCount INF)" }
 
-    if (-not $KeepDownloads) { Remove-Item -Force $file -ErrorAction SilentlyContinue }
+    # Platz sparen: Download + (mehrere GB grosser) Entpack-Temp weg, sobald die
+    # reinen INFs im Ziel liegen - sonst laeuft der Runner beim boot.wim-Commit voll.
+    if (-not $KeepDownloads) {
+        Remove-Item -Force $file -ErrorAction SilentlyContinue
+        Remove-Item -Recurse -Force $extractTo -ErrorAction SilentlyContinue
+    }
 }
 
 Write-Step "Zusammenfassung Treiber"
