@@ -119,7 +119,7 @@ jobs:
           }
 
       - name: (optional) Treiber beschaffen
-        if: ${{ (github.event_name == 'workflow_dispatch' && inputs.include_drivers) || contains(github.event.head_commit.message, '[drivers]') }}
+        if: ${{ (github.event_name == 'workflow_dispatch' && inputs.include_drivers) || contains(github.event.head_commit.message, '[with-drivers]') }}
         shell: pwsh
         working-directory: diagnosepe
         run: |
@@ -130,7 +130,7 @@ jobs:
         shell: pwsh
         working-directory: diagnosepe
         env:
-          INCLUDE_DRIVERS: ${{ (github.event_name == 'workflow_dispatch' && inputs.include_drivers) || contains(github.event.head_commit.message, '[drivers]') }}
+          INCLUDE_DRIVERS: ${{ (github.event_name == 'workflow_dispatch' && inputs.include_drivers) || contains(github.event.head_commit.message, '[with-drivers]') }}
         run: |
           if ($env:INCLUDE_DRIVERS -eq 'true') {
             .\Build-DiagnosePE.ps1 -SkipApp

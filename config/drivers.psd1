@@ -35,9 +35,10 @@
     Amd = @{
         Name       = 'AMD Software: Adrenalin Edition (WHQL)'
         Version    = '26.11.2'
-        # ACHTUNG: AMD rotiert seine Direkt-URLs. Wenn der Download fehlschlaegt,
-        # auf 'Page' die aktuelle "Windows 10/11 64-bit"-EXE holen und hier eintragen.
-        Url        = 'https://drivers.amd.com/drivers/whql-amd-software-adrenalin-edition-26.11.2-win10-win11-nov18.exe'
+        # ACHTUNG: AMD rotiert seine Direkt-URLs und hat kein stabiles Direktmuster.
+        # Daher standardmaessig LEER (wird uebersprungen). Aktuelle "Windows 10/11
+        # 64-bit"-EXE von 'Page' holen und hier eintragen, dann wird sie injiziert.
+        Url        = ''
         Page       = 'https://www.amd.com/en/support/download/drivers.html'
         # AMD-Installer (7z) -> reine Display-INFs liegen unter Packages\Drivers\Display\WT6A_INF
         InfSubPath = 'Packages\Drivers\Display\WT6A_INF'

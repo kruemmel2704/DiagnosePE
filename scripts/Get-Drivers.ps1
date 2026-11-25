@@ -24,6 +24,10 @@ param(
 
 . "$PSScriptRoot\common.ps1"
 
+# Native Tools (7-Zip etc.) duerfen den Lauf nicht per Exit-Code abbrechen -
+# jeder Treiber wird einzeln behandelt, Fehlschlaege landen nur in der Zusammenfassung.
+$PSNativeCommandUseErrorActionPreference = $false
+
 $repo    = Get-RepoRoot
 $catalog = Import-PowerShellDataFile (Join-Path $repo 'config\drivers.psd1')
 $drvRoot = Join-Path $repo 'drivers'
