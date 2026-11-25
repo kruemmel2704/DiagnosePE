@@ -164,6 +164,33 @@ try {
               -Destination (Join-Path $mount 'Windows\System32\winpeshl.ini') -Force
     Write-Ok "App unter X:\DiagnoseTool, Autostart via winpeshl.ini gesetzt."
 
+    # =================================================================
+    # 5b) Fehlende System-DLLs fuer FurMark/OpenGL nach System32 kopieren
+    #     WinPE ist abgespeckt: opengl32.dll (OpenGL-Loader), dinput8.dll
+    #     (DirectInput) und die VC++-Runtime fehlen -> FurMark bricht sonst
+    #     mit "... .dll was not found" ab. Quelle = volles Windows des Runners.
+    # =================================================================
+    Write-Step "System-DLLs fuer FurMark/OpenGL ergaenzen"
+    $srcSys  = Join-Path $env:SystemRoot 'System32'
+    $destSys = Join-Path $mount 'Windows\System32'
+    $needDlls = @(
+        'opengl32.dll','glu32.dll',                       # OpenGL (Loader dispatcht zum GPU-ICD)
+        'dinput8.dll','dinput.dll',                       # DirectInput (FurMark-Eingabe)
+        'msvcp140.dll','vcruntime140.dll','vcruntime140_1.dll',  # VC++ 2015-2022 Runtime
+        'concrt140.dll','msvcp140_1.dll','msvcp140_2.dll'
+    )
+    $copied = 0; $missing = @()
+    foreach ($d in $needDlls) {
+        $s = Join-Path $srcSys $d
+        $t = Join-Path $destSys $d
+        if (Test-Path $s) {
+            if (-not (Test-Path $t)) { Copy-Item -Path $s -Destination $t -Force; $copied++; Write-Ok "+ $d" }
+            else { Write-Info "= $d (bereits vorhanden)" }
+        } else { $missing += $d }
+    }
+    Write-Info "$copied System-DLL(s) ergaenzt."
+    if ($missing) { Write-Warn2 "Auf dem Build-Host nicht gefunden: $($missing -join ', ')" }
+
 } finally {
     # =================================================================
     # 6) Unmounten + committen
